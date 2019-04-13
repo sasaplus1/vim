@@ -1,6 +1,7 @@
 # vim
 
 [![Build Status](https://travis-ci.com/sasaplus1/vim.svg?branch=master)](https://travis-ci.com/sasaplus1/vim)
+[![Docker Build Status](https://img.shields.io/docker/build/sasaplus1/vim.svg)](https://hub.docker.com/r/sasaplus1/vim)
 
 my KaoriYa Vim
 
