@@ -2,6 +2,8 @@
 
 my KaoriYa Vim
 
+[![Build Status](https://travis-ci.com/sasaplus1/vim.svg?branch=master)](https://travis-ci.com/sasaplus1/vim)
+
 ## Related
 
 - https://github.com/vim/vim
