@@ -1,8 +1,8 @@
 # vim
 
-my KaoriYa Vim
-
 [![Build Status](https://travis-ci.com/sasaplus1/vim.svg?branch=master)](https://travis-ci.com/sasaplus1/vim)
+
+my KaoriYa Vim
 
 ## Related
 
