@@ -33,5 +33,7 @@ RUN cd ./vim-kaoriya/vim/src && \
 RUN cd ./vim-kaoriya/vim && \
   ./configure --with-compiledby="${name} <${email}>" --with-tlib=ncurses && \
   make && \
-  make install && \
+  make install
+
+RUN make install -C ./vim-kaoriya/build/xubuntu && \
   vim --version
