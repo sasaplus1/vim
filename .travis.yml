@@ -1,0 +1,20 @@
+git:
+  depth: 3
+
+matrix:
+  include:
+    - os: linux
+      dist: xenial
+      sudo: false
+      language: c
+      compiler: gcc
+      cache: ccache
+      script:
+        - true
+    - os: osx
+      osx_image: xcode10.2
+      language: c
+      compiler: clang
+      cache: ccache
+      script:
+        - true
