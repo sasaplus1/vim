@@ -3,6 +3,8 @@ FROM ubuntu:latest
 ARG email="sasaplus1@gmail.com"
 ARG name="sasa+1"
 
+ARG dist=/opt/vim
+
 WORKDIR /root
 
 RUN apt update && \
@@ -30,10 +32,16 @@ RUN cd ./vim-kaoriya/vim/src && \
   guilt push --all && \
   make autoconf
 
+RUN cd ./vim-kaoriya && \
+  tar --exclude-vcs -cvz -f /root/vim.tar.gz . && \
+  tar --exclude-vcs -cvJ -f /root/vim.tar.xz .
+
 RUN cd ./vim-kaoriya/vim && \
-  ./configure --with-compiledby="${name} <${email}>" --with-tlib=ncurses && \
+  ./configure --prefix="${dist}" --with-compiledby="${name} <${email}>" --with-tlib=ncurses && \
   make && \
   make install
 
-RUN make install -C ./vim-kaoriya/build/xubuntu && \
-  vim --version
+RUN make install VIM_DIR="${dist}/share/vim" -C ./vim-kaoriya/build/xubuntu
+
+RUN printf -- "\nPATH=${dist}/bin:\$PATH\n" >> /root/.bashrc && \
+  "${dist}/bin/vim" --version
