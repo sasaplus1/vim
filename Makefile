@@ -23,3 +23,11 @@ clone-guilt: ## clone koron/guilt
 clone-vim-kaoriya: ## clone koron/vim-kaoriya
 	git clone --depth 1 https://github.com/koron/vim-kaoriya.git
 	cd ./vim-kaoriya && git submodule update --init
+
+.PHONY: build
+build: ## build Docker image
+	docker build -t sasaplus1/vim .
+
+.PHONY: run
+run: ## run Docker container and attach TTY
+	docker run --rm -it sasaplus1/vim /bin/bash
