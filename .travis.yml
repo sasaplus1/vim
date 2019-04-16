@@ -1,9 +1,21 @@
 git:
   depth: 3
 
-matrix:
+jobs:
   include:
-    - os: linux
+    - stage: deploy-src
+      name: deploy KaoriYa patched Vim source
+      os: linux
+      dist: xenial
+      sudo: false
+      language: generic
+      services:
+        - docker
+      script:
+        - true
+    - stage: deploy
+      name: deploy my Vim for Linux
+      os: linux
       dist: xenial
       sudo: false
       language: c
@@ -11,7 +23,8 @@ matrix:
       cache: ccache
       script:
         - true
-    - os: osx
+    - name: deploy my Vim for macOS
+      os: osx
       osx_image: xcode10.2
       language: c
       compiler: clang
