@@ -3,6 +3,7 @@
 SHELL := /bin/bash
 
 makefile_dir := $(abspath $(dir $(lastword $(MAKEFILE_LIST))))
+docker_image := sasaplus1/vim
 
 .PHONY: all
 all: ## output targets
@@ -26,8 +27,8 @@ clone-vim-kaoriya: ## clone koron/vim-kaoriya
 
 .PHONY: build
 build: ## build Docker image
-	docker build -t sasaplus1/vim .
+	docker build -t $(docker_image) .
 
 .PHONY: run
 run: ## run Docker container and attach TTY
-	docker run --rm -it sasaplus1/vim /bin/bash
+	docker run --rm -it $(docker_image) /bin/bash
