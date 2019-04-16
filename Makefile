@@ -2,7 +2,7 @@
 
 SHELL := /bin/bash
 
-MAKEFILE_DIR := $(abspath $(dir $(lastword $(MAKEFILE_LIST))))
+makefile_dir := $(abspath $(dir $(lastword $(MAKEFILE_LIST))))
 
 .PHONY: all
 all: ## output targets
@@ -10,7 +10,7 @@ all: ## output targets
 
 .PHONY: clean
 clean: ## remove some files and directories
-	$(RM) -rf $(MAKEFILE_DIR)/guilt $(MAKEFILE_DIR)/vim-kaoriya
+	$(RM) -rf $(makefile_dir)/guilt $(makefile_dir)/vim-kaoriya
 
 .PHONY: clone
 clone: clone-guilt clone-vim-kaoriya ## clone-guilt and clone-vim-kaoriya
