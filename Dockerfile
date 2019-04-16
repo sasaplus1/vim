@@ -33,8 +33,8 @@ RUN cd ./vim-kaoriya/vim/src && \
   make autoconf
 
 RUN cd ./vim-kaoriya && \
-  tar --exclude-vcs -cvz -f /root/vim.tar.gz . && \
-  tar --exclude-vcs -cvJ -f /root/vim.tar.xz .
+  tar --exclude-vcs -cvz -f /root/kaoriya-patched-vim-src.tar.gz . && \
+  tar --exclude-vcs -cvJ -f /root/kaoriya-patched-vim-src.tar.xz .
 
 RUN cd ./vim-kaoriya/vim && \
   ./configure --prefix="${dist}" --with-compiledby="${name} <${email}>" --with-tlib=ncurses && \
