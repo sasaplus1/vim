@@ -32,3 +32,11 @@ build: ## build Docker image
 .PHONY: run
 run: ## run Docker container and attach TTY
 	docker run --rm -it $(docker_image) /bin/bash
+
+.PHONY: copy-source
+copy-source: container := $$(docker ps --latest --quiet)
+copy-source: ##
+	docker run --rm --detach sasaplus1/vim tail -f /dev/null
+	-docker cp $(container):/root/kaoriya-patched-vim-src.tar.gz .
+	-docker cp $(container):/root/kaoriya-patched-vim-src.tar.xz .
+	docker stop $(container)
