@@ -3,7 +3,7 @@ git:
 
 jobs:
   include:
-    - stage: deploy-src
+    - stage: Deploy Source
       name: deploy KaoriYa patched Vim source
       os: linux
       dist: xenial
@@ -13,7 +13,7 @@ jobs:
         - docker
       script:
         - true
-    - stage: deploy
+    - stage: Deploy
       name: deploy my Vim for Linux
       os: linux
       dist: xenial
