@@ -2,38 +2,53 @@
 
 SHELL := /bin/bash
 
-email := sasaplus1@gmail.com
-name  := sasa+1
-
 configure := $(strip \
-  --with-compiledby="$(name) <$(email)>" \
+  --enable-fail-if-missing \
+  --disable-smack \
+  --disable-selinux \
+  --disable-xsmp \
+  --disable-xsmp-interact \
+  --enable-luainterp=dynamic \
+  --enable-python3interp=dynamic \
+  --enable-cscope \
+  --disable-netbeans \
+  --enable-terminal \
+  --enable-multibyte \
+  --disable-rightleft \
+  --disable-arabic \
+  --enable-gui=no \
+  --with-compiledby="sasa+1" \
+  --with-luajit \
+  --without-x \
   --with-tlib=ncurses \
 )
 
-git_user_email := $(email)
-git_user_name  := $(name)
-
-source_archive := kaoriya-patched-vim-src
-
 dockerfile := sasaplus1/vim
 
-makefile := $(abspath $(lastword $(MAKEFILE_LIST)))
-
--include ./vim-kaoriya/VERSION
-
-# NOTE: VIM_VER from ./vim-kaoriya/VERSION
-tag := v$(VIM_VER)
+makefile     := $(abspath $(lastword $(MAKEFILE_LIST)))
+makefile_dir := $(dir $(makefile))
 
 .PHONY: all
 all: ## output targets
 	@grep -E '^[a-zA-Z_-]+:.*?## .*$$' $(makefile) | awk 'BEGIN { FS = ":.*?## " }; { printf "\033[36m%-30s\033[0m %s\n", $$1, $$2 }'
 
+.PHONY: apply-patch
+apply-patch: patch_dir := $(makefile_dir)/vim-kaoriya
+apply-patch: vim_dir := $(makefile_dir)/vim-kaoriya/vim
+apply-patch: src_dir := $(makefile_dir)/vim-kaoriya/vim/src
+apply-patch: ## apply KaoriYa patch
+	cd $(vim_dir) && git checkout -b $$($(MAKE) --no-print-directory -C $(makefile_dir) print-git-tag) >/dev/null
+	cd $(vim_dir) && git config --local guilt.patchesdir ../patches
+	cd $(vim_dir) && guilt init
+	cd $(patch_dir) && cp ./patches/master/* ./patches/$$($(MAKE) --no-print-directory -C $(makefile_dir) print-git-tag)
+	cd $(src_dir) && guilt push --all
+	make -C $(src_dir) autoconf
+
 .PHONY: build
 build: ## build Docker image
-	docker build -t $(dockerfile) .
+	DOCKER_BUILDKIT=1 docker build -t $(dockerfile) .
 
 .PHONY: clean
-clean: makefile_dir := $(dir $(makefile))
 clean: ## remove some files and directories
 	$(RM) -rf $(makefile_dir)/guilt $(makefile_dir)/vim-kaoriya
 
@@ -45,42 +60,54 @@ clone-guilt: ## clone koron/guilt
 	-git clone --depth 1 https://github.com/koron/guilt.git
 
 .PHONY: clone-vim-kaoriya
+clone-vim-kaoriya: submodules := ./patches ./vim
 clone-vim-kaoriya: ## clone koron/vim-kaoriya
 	-git clone --depth 1 https://github.com/koron/vim-kaoriya.git
-	-cd ./vim-kaoriya && git submodule update --init
-
-.PHONY: copy-source-archive
-copy-source-archive: container := $$(docker ps --latest --quiet)
-copy-source-archive: ## copy KaoriYa patched source archive from Docker container
-	docker run --rm --detach sasaplus1/vim tail -f /dev/null
-	-docker cp $(container):/root/$(source_archive).tar.gz .
-	-docker cp $(container):/root/$(source_archive).tar.xz .
-	docker stop $(container)
-
-.PHONY: create-source-archive
-create-source-archive: ## create source archive
-	@$(MAKE) clone-vim-kaoriya >/dev/null 2>&1
-	# NOTE: GNU tar has --exclude-vcs option, but BSD not
-	tar --exclude='.git*' -cvz -f $(source_archive).tar.gz ./vim-kaoriya
-	tar --exclude='.git*' -cvJ -f $(source_archive).tar.xz ./vim-kaoriya
+	-cd ./vim-kaoriya && git submodule update --init -- $(submodules)
 
 .PHONY: print-configure
 print-configure: ## print configure options
 	@printf -- '%s' '$(configure)'
 
+define print_cpu_count
+  if [ -f "/proc/cpuinfo" ]
+  then
+    grep -c processor < /proc/cpuinfo
+  elif type sysctl >/dev/null 2>&1
+  then
+    sysctl -n hw.ncpu
+  else
+    printf -- '%d\n' 1
+  fi
+endef
+export print_cpu_count
+
+.PHONY: print-cpu-count
+print-cpu-count: ## print CPU count
+	@$(SHELL) -c "$${print_cpu_count}"
+
+define print_git_tag
+.DEFAULT_GOAL := all
+
+SHELL := /bin/bash
+
+.PHONY: all
+all:
+	@printf -- '%s' '$$(VIM_VER)'
+endef
+export print_git_tag
+
 .PHONY: print-git-tag
-# NOTE: print-git-tag requires clone-vim-kaoriya
-# requires --no-print-directory option if use -C option
-# print-git-tag: clone-vim-kaoriya
 print-git-tag: ## print target Vim version for KaoriYa patch
 	@$(MAKE) clone-vim-kaoriya >/dev/null 2>&1
-	@printf -- '%s' '$(tag)'
+	@printf -- 'v%s' "$${print_git_tag}" | $(MAKE) -f ./vim-kaoriya/VERSION -f - all
 
 .PHONY: run
+run: options := --interactive --rm --tty
 run: ## run Docker container and attach TTY
-	docker run --rm -it $(dockerfile) /bin/bash
+	docker run $(options) $(dockerfile) /bin/bash
 
 .PHONY: set-git-user
 set-git-user: ## set user.email and user.name for Git
-	git config --global user.email '$(git_user_email)'
-	git config --global user.name '$(git_user_name)'
+	git config --global user.email 'johndoe@example.com'
+	git config --global user.name 'John Doe'
