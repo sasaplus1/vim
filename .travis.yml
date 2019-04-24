@@ -8,7 +8,7 @@ jobs:
   include:
     - stage: Test
       name: build test my Vim in Docker container
-      if: branch = master
+      if: tag IS blank
       os: linux
       dist: xenial
       sudo: false
@@ -19,7 +19,7 @@ jobs:
         - docker build --tag ${TRAVIS_REPO_SLUG} .
     - stage: Deploy
       name: deploy my Vim for Linux
-      if: branch = master
+      if: tag IS blank
       os: linux
       dist: xenial
       sudo: false
@@ -70,5 +70,5 @@ jobs:
         file_glob: true
         skip_cleanup: true
         on:
-          branch: master
+          tag: false
           repo: sasaplus1/vim
