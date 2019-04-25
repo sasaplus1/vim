@@ -74,6 +74,8 @@ jobs:
         on:
           all_branches: true
           repo: sasaplus1/vim
+      after_deploy:
+        - /tmp/vim/bin/vim --version
     - name: deploy my Vim for macOS
       os: osx
       osx_image: xcode10.2
@@ -126,3 +128,5 @@ jobs:
         on:
           all_branches: true
           repo: sasaplus1/vim
+      after_deploy:
+        - /tmp/vim/bin/vim --version
