@@ -63,7 +63,7 @@ jobs:
         - tar cJf ${ARCHIVE}.tar.xz ./vim
         - zip -r ${ARCHIVE}.zip ./vim
         - cd -
-        - git tag ${TRAVIS_TAG:-$(date +%Y%m%dT%H%M%S)}
+        - git tag -a "${TRAVIS_TAG:-$(date +%Y%m%dT%H%M%S)}" -m "${TRAVIS_BUILD_WEB_URL}"
       deploy:
         provider: releases
         api_key:
@@ -115,7 +115,7 @@ jobs:
         - tar cJf ${ARCHIVE}.tar.xz ./vim
         - zip -r ${ARCHIVE}.zip ./vim
         - cd -
-        - git tag ${TRAVIS_TAG:-$(date +%Y%m%dT%H%M%S)}
+        - git tag -a "${TRAVIS_TAG:-$(date +%Y%m%dT%H%M%S)}" -m "${TRAVIS_BUILD_WEB_URL}"
       deploy:
         provider: releases
         api_key:
