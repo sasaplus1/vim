@@ -14,14 +14,8 @@ jobs:
       dist: xenial
       sudo: false
       language: generic
-      services:
-        - docker
-      env:
-        - TAG=${TRAVIS_REPO_SLUG}
       script:
-        - docker build --tag ${TAG} .
-      after_script:
-        - docker run --rm -it ${TAG} /opt/vim/bin/vim --version
+        - printf -- '%s\n' 'see: https://hub.docker.com/r/sasaplus1/vim/builds'
     - name: build test my Vim in Alpine Docker container
       os: linux
       dist: xenial
