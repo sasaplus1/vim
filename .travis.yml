@@ -22,6 +22,19 @@ jobs:
         - docker build --tag ${TAG} -f ./dockerfiles/alpine/Dockerfile .
       after_script:
         - docker run --rm -it ${TAG} /opt/vim/bin/vim --version
+    - name: build test my Vim in Ubuntu Docker container
+      os: linux
+      dist: xenial
+      sudo: false
+      language: generic
+      services:
+        - docker
+      env:
+        - TAG=${TRAVIS_REPO_SLUG}-ubuntu
+      script:
+        - docker build --tag ${TAG} -f ./dockerfiles/ubuntu/Dockerfile .
+      after_script:
+        - docker run --rm -it ${TAG} /opt/vim/bin/vim --version
     - stage: Deploy
       name: deploy my Vim for Linux
       os: linux

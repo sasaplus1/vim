@@ -53,6 +53,11 @@ build-alpine: dockerfile := ./dockerfiles/alpine/Dockerfile
 build-alpine: ## build Alpine Docker image
 	DOCKER_BUILDKIT=1 docker build -t $(slug)-alpine -f $(dockerfile) .
 
+.PHONY: build-ubuntu
+build-ubuntu: dockerfile := ./dockerfiles/ubuntu/Dockerfile
+build-ubuntu: ## build Ubuntu Docker image
+	DOCKER_BUILDKIT=1 docker build -t $(slug)-ubuntu -f $(dockerfile) .
+
 .PHONY: clean
 clean: ## remove some files and directories
 	$(RM) -rf $(makefile_dir)/guilt $(makefile_dir)/vim-kaoriya
@@ -116,6 +121,11 @@ run: ## run Travis-CI Docker container and attach TTY
 run-alpine: options := --interactive --rm --tty
 run-alpine: ## run Alpine Docker container and attach TTY
 	docker run $(options) $(slug)-alpine /bin/bash
+
+.PHONY: run-ubuntu
+run-ubuntu: options := --interactive --rm --tty
+run-ubuntu: ## run Ubuntu Docker container and attach TTY
+	docker run $(options) $(slug)-ubuntu /bin/bash
 
 .PHONY: set-git-user
 set-git-user: ## set user.email and user.name for Git
