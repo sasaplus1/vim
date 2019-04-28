@@ -11,6 +11,8 @@ RUN apk --update add --no-cache \
   lua5.1 lua5.1-dev luajit luajit-dev \
   python3 python3-dev
 
+WORKDIR /root
+
 COPY ./Makefile ./Makefile
 
 RUN make set-git-user clone

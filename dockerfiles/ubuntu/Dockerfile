@@ -10,6 +10,8 @@ RUN apt update && apt install --yes \
   lua5.1 liblua5.1-dev luajit libluajit-5.1-dev \
   python3 python3-dev
 
+WORKDIR /root
+
 COPY ./Makefile ./Makefile
 
 RUN make set-git-user clone
