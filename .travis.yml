@@ -14,26 +14,10 @@ jobs:
       dist: xenial
       sudo: false
       language: generic
-      cache:
-        directories:
-          - ${HOME}/docker
       services:
         - docker
-      before_install:
-        # NOTE: https://github.com/travis-ci/travis-ci/issues/5358#issuecomment-248915326
-        - |
-          if [ -d "${HOME}/docker" ]
-          then
-            ls "${HOME}/docker/*.tar.gz" | xargs -I {file} sh -c "zcat {file} | docker load"
-          fi
       script:
         - docker build --tag ${TRAVIS_REPO_SLUG} .
-      before_cache:
-        # NOTE: https://github.com/travis-ci/travis-ci/issues/5358#issuecomment-248915326
-        - >
-          mkdir -p ${HOME}/docker &&
-          docker images -a --filter='dangling=false' --format '{{.Repository}}:{{.Tag}} {{.ID}}' |
-          xargs -n 2 -t bash -c 'test -e $HOME/docker/$1.tar.gz || docker save $0 | gzip -2 > $HOME/docker/$1.tar.gz'
     - stage: Deploy
       name: deploy my Vim for Linux
       os: linux
