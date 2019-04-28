@@ -8,7 +8,7 @@ RUN apt update && apt install --yes \
   build-essential libncurses-dev \
   gettext \
   lua5.1 liblua5.1-dev luajit libluajit-5.1-dev \
-  python2 python2-dev \
+  python python-dev \
   python3 python3-dev
 
 WORKDIR /root
