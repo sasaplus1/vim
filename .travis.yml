@@ -15,7 +15,7 @@ jobs:
       sudo: false
       language: generic
       script:
-        - printf -- '%s\n' 'see: https://hub.docker.com/r/sasaplus1/vim/builds'
+        - printf -- '%s\n' 'see https://hub.docker.com/r/sasaplus1/vim/builds'
     - name: build test my Vim in Alpine Docker container
       os: linux
       dist: xenial
