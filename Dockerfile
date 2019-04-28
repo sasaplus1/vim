@@ -5,10 +5,12 @@ ARG prefix=/opt/vim
 
 # NOTE: requires: autoconf git make
 # NOTE: requires if compile: build-essential libncurses-dev
-# NOTE: requires if use Lua: lua5.1 liblua5.1-dev luajit libluajit-5.1-dev
-# NOTE: requires if use Python: python3 python3-dev
+# NOTE: requires if use +gettext: gettext
+# NOTE: requires if use +lua: lua5.1 liblua5.1-dev luajit libluajit-5.1-dev
+# NOTE: requires if use +python3: python3 python3-dev
 RUN apt update && apt install --yes \
   autoconf git make \
+  gettext \
   build-essential libncurses-dev \
   lua5.1 liblua5.1-dev luajit libluajit-5.1-dev \
   python3 python3-dev
