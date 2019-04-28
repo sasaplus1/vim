@@ -19,6 +19,7 @@ configure := $(strip \
   --disable-arabic \
   --enable-gui=no \
   --with-compiledby="sasa+1" \
+  --with-features=huge \
   --with-luajit \
   --without-x \
   --with-tlib=ncurses \
