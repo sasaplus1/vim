@@ -21,7 +21,7 @@ jobs:
       script:
         - docker build --tag ${TAG} .
       after_script:
-        - docker --rm -it ${TAG} /opt/vim/bin/vim --version
+        - docker run --rm -it ${TAG} /opt/vim/bin/vim --version
     - name: build test my Vim in Alpine Docker container
       os: linux
       dist: xenial
@@ -34,7 +34,7 @@ jobs:
       script:
         - docker build --tag ${TAG} -f ./dockerfiles/alpine/Dockerfile .
       after_script:
-        - docker --rm -it ${TAG} /opt/vim/bin/vim --version
+        - docker run --rm -it ${TAG} /opt/vim/bin/vim --version
     - stage: Deploy
       name: deploy my Vim for Linux
       os: linux
