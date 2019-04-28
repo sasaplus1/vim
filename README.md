@@ -9,11 +9,11 @@ my KaoriYa Vim
 ## Dockerfile
 
 - [Dockerfile](/Dockerfile)
-    - simulate Travis-CI container in local
+    - build within Travis-CI container-based image
 - [dockerfiles/alpine/Dockerfile](/dockerfiles/alpine/Dockerfile)
-    - build on Alpine
+    - build within Alpine image
 - [dockerfiles/ubuntu/Dockerfile](/dockerfiles/ubuntu/Dockerfile)
-    - build on Ubuntu
+    - build within Ubuntu image
 
 ## Related
 
