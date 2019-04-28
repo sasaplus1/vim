@@ -6,6 +6,15 @@
 
 my KaoriYa Vim
 
+## Dockerfile
+
+- [Dockerfile](/Dockerfile)
+    - simulate Travis-CI container in local
+- [dockerfiles/alpine/Dockerfile](/dockerfiles/alpine/Dockerfile)
+    - build on Alpine
+- [dockerfiles/ubuntu/Dockerfile](/dockerfiles/ubuntu/Dockerfile)
+    - build on Ubuntu
+
 ## Related
 
 - https://github.com/vim/vim
