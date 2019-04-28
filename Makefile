@@ -9,6 +9,7 @@ configure := $(strip \
   --disable-xsmp \
   --disable-xsmp-interact \
   --enable-luainterp=dynamic \
+  --enable-pythoninterp=dynamic \
   --enable-python3interp=dynamic \
   --enable-cscope \
   --disable-netbeans \

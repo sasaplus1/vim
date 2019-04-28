@@ -9,6 +9,7 @@ RUN apk --update add --no-cache \
   gcc ncurses-libs ncurses-dev \
   gettext gettext-dev \
   lua5.1 lua5.1-dev luajit luajit-dev \
+  python2 python2-dev \
   python3 python3-dev
 
 WORKDIR /root
