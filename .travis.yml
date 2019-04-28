@@ -9,15 +9,32 @@ env:
 jobs:
   include:
     - stage: Test
-      name: build test my Vim in Docker container
+      name: build test my Vim in Travis-CI Docker container
       os: linux
       dist: xenial
       sudo: false
       language: generic
       services:
         - docker
+      env:
+        - TAG=${TRAVIS_REPO_SLUG}
       script:
-        - docker build --tag ${TRAVIS_REPO_SLUG} .
+        - docker build --tag ${TAG} .
+      after_script:
+        - docker --rm -it ${TAG} /opt/vim/bin/vim --version
+    - name: build test my Vim in Alpine Docker container
+      os: linux
+      dist: xenial
+      sudo: false
+      language: generic
+      services:
+        - docker
+      env:
+        - TAG=${TRAVIS_REPO_SLUG}-alpine
+      script:
+        - docker build --tag ${TAG} -f ./dockerfiles/alpine/Dockerfile .
+      after_script:
+        - docker --rm -it ${TAG} /opt/vim/bin/vim --version
     - stage: Deploy
       name: deploy my Vim for Linux
       os: linux

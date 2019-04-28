@@ -23,7 +23,7 @@ configure := $(strip \
   --with-tlib=ncurses \
 )
 
-dockerfile := sasaplus1/vim
+slug := sasaplus1/vim
 
 makefile     := $(abspath $(lastword $(MAKEFILE_LIST)))
 makefile_dir := $(dir $(makefile))
@@ -45,8 +45,13 @@ apply-patch: ## apply KaoriYa patch
 	make -C $(src_dir) autoconf
 
 .PHONY: build
-build: ## build Docker image
-	DOCKER_BUILDKIT=1 docker build -t $(dockerfile) .
+build: ## build Travis-CI Docker image
+	DOCKER_BUILDKIT=1 docker build -t $(slug) .
+
+.PHONY: build-alpine
+build-alpine: dockerfile := ./dockerfiles/alpine/Dockerfile
+build-alpine: ## build Alpine Docker image
+	DOCKER_BUILDKIT=1 docker build -t $(slug)-alpine -f $(dockerfile) .
 
 .PHONY: clean
 clean: ## remove some files and directories
@@ -104,8 +109,13 @@ print-git-tag: ## print target Vim version for KaoriYa patch
 
 .PHONY: run
 run: options := --interactive --rm --tty
-run: ## run Docker container and attach TTY
-	docker run $(options) $(dockerfile) /bin/bash
+run: ## run Travis-CI Docker container and attach TTY
+	docker run $(options) $(slug) /bin/bash
+
+.PHONY: run-alpine
+run-alpine: options := --interactive --rm --tty
+run-alpine: ## run Alpine Docker container and attach TTY
+	docker run $(options) $(slug)-alpine /bin/bash
 
 .PHONY: set-git-user
 set-git-user: ## set user.email and user.name for Git
