@@ -6,6 +6,22 @@
 
 my KaoriYa Vim
 
+## Install
+
+### macOS
+
+```console
+$ curl -LO https://github.com/sasaplus1/vim/releases/latest/download/vim-osx.tar.xz
+$ tar xvf vim-osx.tar.xz
+```
+
+### Linux
+
+```console
+$ curl -LO https://github.com/sasaplus1/vim/releases/latest/download/vim-linux.tar.xz
+$ tar xvf vim-linux.tar.xz
+```
+
 ## Dockerfile
 
 - [Dockerfile](/Dockerfile)
