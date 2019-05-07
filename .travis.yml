@@ -117,9 +117,10 @@ jobs:
           update: true
       env:
         - ARCHIVE=vim-${TRAVIS_OS_NAME}
+        - GETTEXT=$(brew --prefix gettext)
         - GUILT=/tmp/opt/guilt
         - LUA_PREFIX=$(brew --prefix)
-        - PATH=${GUILT}/bin:/usr/local/opt/ccache/libexec:${PATH}
+        - PATH=${GUILT}/bin:${GETTEXT}/bin:/usr/local/opt/ccache/libexec:${PATH}
       install:
         - make clone-guilt
         - gsed -i.bak -r -e 's|\<readlink\>|greadlink|g' ./guilt/guilt
