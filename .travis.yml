@@ -130,7 +130,7 @@ jobs:
       before_deploy:
         - make set-git-user clone-vim-kaoriya apply-patch
         - cd ./vim-kaoriya/vim
-        - LDFLAGS=-L${GETTEXT}/lib ./configure --prefix=/tmp/vim $(make --no-print-directory -C ../../ print-configure)
+        - CFLAGS=-I${GETTEXT}/include LDFLAGS=-L${GETTEXT}/lib ./configure --prefix=/tmp/vim $(make --no-print-directory -C ../../ print-configure)
         - make -j $(make --no-print-directory -C ../../ print-cpu-count)
         - make -j $(make --no-print-directory -C ../../ print-cpu-count) install
         - cd -
