@@ -97,6 +97,7 @@ jobs:
           repo: sasaplus1/vim
       after_deploy:
         - /tmp/vim/bin/vim --version
+        - ldd /tmp/vim/bin/vim
     - name: deploy my Vim for macOS
       os: osx
       osx_image: xcode10.2
@@ -155,3 +156,4 @@ jobs:
           repo: sasaplus1/vim
       after_deploy:
         - /tmp/vim/bin/vim --version
+        - otool -L /tmp/vim/bin/vim
