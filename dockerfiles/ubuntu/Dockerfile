@@ -1,6 +1,6 @@
 FROM ubuntu:xenial
 
-ARG slug=sasaplus1/vim
+ARG datadir=/usr/share
 ARG prefix=/opt/vim
 
 RUN apt update && apt install --yes \
@@ -25,7 +25,7 @@ RUN make apply-patch
 
 RUN cd ./vim-kaoriya/vim && \
   ./configure --prefix="${prefix}" $(make --no-print-directory -C ../../ print-configure) && \
-  make -j $(make --no-print-directory -C ../../ print-cpu-count) && \
+  make -j $(make --no-print-directory -C ../../ print-cpu-count) DATADIR=${datadir} && \
   make -j $(make --no-print-directory -C ../../ print-cpu-count) install
 
 RUN make -C ./vim-kaoriya/build/xubuntu VIM_DIR="${prefix}/share/vim" install

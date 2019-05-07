@@ -1,7 +1,8 @@
 FROM travisci/ci-sardonyx:packer-1554885359-f909ac5
 
-ARG slug=sasaplus1/vim
+ARG datadir=/usr/share
 ARG prefix=/opt/vim
+ARG slug=sasaplus1/vim
 
 # NOTE: requires: autoconf git make
 # NOTE: requires if compile: build-essential libncurses-dev
@@ -35,7 +36,7 @@ RUN make apply-patch
 
 RUN cd ./vim-kaoriya/vim && \
   ./configure --prefix="${prefix}" $(make --no-print-directory -C ../../ print-configure) && \
-  make -j $(make --no-print-directory -C ../../ print-cpu-count) && \
+  make -j $(make --no-print-directory -C ../../ print-cpu-count) DATADIR=${datadir} && \
   make -j $(make --no-print-directory -C ../../ print-cpu-count) install
 
 RUN sed -i.bak -r -e 's|\<root\>|travis|g' ./vim-kaoriya/build/xubuntu/Makefile && \
