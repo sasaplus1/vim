@@ -110,7 +110,6 @@ jobs:
           packages:
             - ccache
             - coreutils
-            - gettext
             - gnu-sed
             - lua@5.1
             - luajit
@@ -120,7 +119,7 @@ jobs:
       env:
         - ARCHIVE=vim-${TRAVIS_OS_NAME}
         - DATADIR=/usr/share
-        - GETTEXT=$(brew --prefix gettext)
+        - GETTEXT=/tmp/vim/share/gettext
         - GUILT=/tmp/opt/guilt
         - LUA_PREFIX=$(brew --prefix)
         - PATH=${GUILT}/bin:${GETTEXT}/bin:/usr/local/opt/ccache/libexec:${PATH}
@@ -128,6 +127,12 @@ jobs:
         - make clone-guilt
         - gsed -i.bak -r -e 's|\<readlink\>|greadlink|g' ./guilt/guilt
         - make -C ./guilt PREFIX=${GUILT} install
+        - curl -L -O https://ftp.gnu.org/pub/gnu/gettext/gettext-0.20.tar.xz
+        - tar xf ./gettext-0.20.tar.xz
+        - cd ./gettext-*
+        - ./configure --prefix=/tmp/vim/share/gettext --disable-java --disable-c++
+        - make
+        - make install
       script:
         - true
       before_deploy:
