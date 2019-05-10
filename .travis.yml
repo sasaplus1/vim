@@ -131,8 +131,8 @@ jobs:
         - tar xf ./gettext-0.20.tar.xz
         - cd ./gettext-*
         - ./configure --prefix=/tmp/vim/share/gettext --disable-java --disable-c++
-        - make
-        - make install
+        - make >/dev/null
+        - make install >/dev/null
       script:
         - true
       before_deploy:
