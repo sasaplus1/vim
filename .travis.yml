@@ -133,6 +133,7 @@ jobs:
         - ./configure --prefix=/tmp/vim/share/gettext --disable-java --disable-c++
         - make >/dev/null
         - make install >/dev/null
+        - cd -
       script:
         - true
       before_deploy:
