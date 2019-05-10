@@ -82,7 +82,7 @@ jobs:
         - cd /tmp
         - tar czf ${ARCHIVE}.tar.gz ./vim
         - tar cJf ${ARCHIVE}.tar.xz ./vim
-        - zip -r ${ARCHIVE}.zip ./vim
+        - zip -q -r ${ARCHIVE}.zip ./vim
         - cd -
         - export TRAVIS_TAG="${TRAVIS_COMMIT::7}-${TRAVIS_BUILD_ID}"
         - git tag "${TRAVIS_TAG}"
@@ -148,7 +148,7 @@ jobs:
         - cd /tmp
         - tar czf ${ARCHIVE}.tar.gz ./vim
         - tar cJf ${ARCHIVE}.tar.xz ./vim
-        - zip -r ${ARCHIVE}.zip ./vim
+        - zip -q -r ${ARCHIVE}.zip ./vim
         - cd -
         - export TRAVIS_TAG="${TRAVIS_COMMIT::7}-${TRAVIS_BUILD_ID}"
         - git tag "${TRAVIS_TAG}"
