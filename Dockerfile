@@ -42,7 +42,13 @@ RUN cd ./vim-kaoriya/vim && \
 RUN sed -i.bak -r -e 's|\<root\>|travis|g' ./vim-kaoriya/build/xubuntu/Makefile && \
   make -C ./vim-kaoriya/build/xubuntu VIM_DIR="${prefix}/share/vim" install
 
+COPY --chown=travis:travis ./pvim "${prefix}/bin/pvim"
+
+RUN cd "${prefix}/bin" && \
+  make create-symlinks -C "${OLDPWD}" && \
+  cd -
+
 RUN printf -- '\n\n%s\n' "PATH=${prefix}/bin:\$PATH" >> ${HOME}/.bashrc && \
-  "${prefix}/bin/vim" --version
+  "${prefix}/bin/pvim" --version
 
 ENV PATH ${prefix}/bin:${PATH}

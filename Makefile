@@ -1,5 +1,4 @@
 .DEFAULT_GOAL := all
-
 SHELL := /bin/bash
 
 configure := $(strip \
@@ -76,6 +75,14 @@ clone-vim-kaoriya: submodules := ./patches ./vim
 clone-vim-kaoriya: ## clone koron/vim-kaoriya
 	-git clone --depth 1 https://github.com/koron/vim-kaoriya.git
 	-cd ./vim-kaoriya && git submodule update --init -- $(submodules)
+
+.PHONY: create-symlinks
+create-symlinks: ## create symbolic links to pvim
+	ln -s pvim pex
+	ln -s pvim prview
+	ln -s pvim prvim
+	ln -s pvim pview
+	ln -s pvim pvimdiff
 
 .PHONY: print-configure
 print-configure: ## print configure options
