@@ -62,12 +62,13 @@ jobs:
           update: true
       env:
         - ARCHIVE=vim-${TRAVIS_OS_NAME}
-        - CC='ccache gcc'
-        - CXX='ccache g++'
         - DATADIR=/usr/share
         - GUILT=/opt/guilt
         - PATH=${GUILT}/bin:${PATH}
         - USE_CCACHE=1
+      before_install:
+        - export set CC='ccache gcc'
+        - export set CXX='ccache g++'
       install:
         - make clone-guilt
         - make -C ./guilt PREFIX=${GUILT} install
@@ -120,14 +121,15 @@ jobs:
           update: true
       env:
         - ARCHIVE=vim-${TRAVIS_OS_NAME}
-        - CC='ccache clang'
-        - CXX='ccache clang++'
         - DATADIR=/usr/share
         - GETTEXT=/tmp/vim/share/gettext
         - GUILT=/tmp/opt/guilt
         - LUA_PREFIX=$(brew --prefix)
         - PATH=${GUILT}/bin:${GETTEXT}/bin:/usr/local/opt/ccache/libexec:${PATH}
         - USE_CCACHE=1
+      before_install:
+        - export set CC='ccache clang'
+        - export set CXX='ccache clang++'
       install:
         - make clone-guilt
         - gsed -i.bak -r -e 's|\<readlink\>|greadlink|g' ./guilt/guilt
