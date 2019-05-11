@@ -72,8 +72,6 @@ jobs:
         - make clone-guilt
         - make -C ./guilt PREFIX=${GUILT} install
       script:
-        - true
-      before_deploy:
         - make set-git-user clone-vim-kaoriya apply-patch
         - cd ./vim-kaoriya/vim
         - ./configure --prefix=/tmp/vim $(make --no-print-directory -C ../../ print-configure)
@@ -82,6 +80,7 @@ jobs:
         - cd -
         - sed -i.bak -r -e 's|\<root\>|travis|g' ./vim-kaoriya/build/xubuntu/Makefile
         - make -C ./vim-kaoriya/build/xubuntu VIM_DIR=/tmp/vim/share/vim install
+      before_deploy:
         - cd /tmp
         - tar czf ${ARCHIVE}.tar.gz ./vim
         - tar cJf ${ARCHIVE}.tar.xz ./vim
@@ -142,8 +141,6 @@ jobs:
         - rm -rf /tmp/vim/share/gettext/share/doc
         - cd -
       script:
-        - true
-      before_deploy:
         - make set-git-user clone-vim-kaoriya apply-patch
         - cd ./vim-kaoriya/vim
         - CFLAGS=-I${GETTEXT}/include LDFLAGS=-L${GETTEXT}/lib ./configure --prefix=/tmp/vim $(make --no-print-directory -C ../../ print-configure)
@@ -153,6 +150,7 @@ jobs:
         - gsed -i.bak -r -e 's|\<root\>|travis|g' ./vim-kaoriya/build/freebsd/Makefile
         - make -C ./vim-kaoriya/build/freebsd VIM_DIR=/tmp/vim/share/vim kaoriya-install
         - install_name_tool -change '/tmp/vim/share/gettext/lib/libintl.7.dylib' '@executable_path/../share/gettext/lib/libintl.7.dylib' /tmp/vim/bin/vim
+      before_deploy:
         - cd /tmp
         - tar czf ${ARCHIVE}.tar.gz ./vim
         - tar cJf ${ARCHIVE}.tar.xz ./vim
