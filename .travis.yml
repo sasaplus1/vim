@@ -146,6 +146,7 @@ jobs:
         - cd -
         - gsed -i.bak -r -e 's|\<root\>|travis|g' ./vim-kaoriya/build/freebsd/Makefile
         - make -C ./vim-kaoriya/build/freebsd VIM_DIR=/tmp/vim/share/vim kaoriya-install
+        - install_name_tool -change '/tmp/vim/share/gettext/lib/libintl.7.dylib' '@executable_path/../share/gettext/lib/libintl.7.dylib' /tmp/vim/bin/vim
         - cd /tmp
         - tar czf ${ARCHIVE}.tar.gz ./vim
         - tar cJf ${ARCHIVE}.tar.xz ./vim
