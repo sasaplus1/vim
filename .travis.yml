@@ -62,7 +62,7 @@ jobs:
           update: true
       env:
         - ARCHIVE=vim-${TRAVIS_OS_NAME}
-        - DATADIR=/usr/share
+        - DATADIR=/usr/local/share
         - GUILT=/opt/guilt
         - PATH=${GUILT}/bin:${PATH}
         - USE_CCACHE=1
@@ -121,7 +121,7 @@ jobs:
           update: true
       env:
         - ARCHIVE=vim-${TRAVIS_OS_NAME}
-        - DATADIR=/usr/share
+        - DATADIR=/usr/local/share
         - GETTEXT=/tmp/vim/share/gettext
         - GUILT=/tmp/opt/guilt
         - LUA_PREFIX=$(brew --prefix)

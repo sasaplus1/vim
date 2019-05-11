@@ -1,6 +1,6 @@
 FROM alpine:3.9
 
-ARG datadir=/usr/share
+ARG datadir=/usr/local/share
 ARG prefix=/opt/vim
 
 RUN apk --update add --no-cache \

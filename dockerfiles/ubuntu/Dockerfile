@@ -1,6 +1,6 @@
 FROM ubuntu:xenial
 
-ARG datadir=/usr/share
+ARG datadir=/usr/local/share
 ARG prefix=/opt/vim
 
 RUN apt update && apt install --yes \

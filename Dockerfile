@@ -1,6 +1,6 @@
 FROM travisci/ci-sardonyx:packer-1554885359-f909ac5
 
-ARG datadir=/usr/share
+ARG datadir=/usr/local/share
 ARG prefix=/opt/vim
 ARG slug=sasaplus1/vim
 
