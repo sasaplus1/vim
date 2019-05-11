@@ -82,7 +82,7 @@ jobs:
         - cd /tmp
         - tar czf ${ARCHIVE}.tar.gz ./vim
         - tar cJf ${ARCHIVE}.tar.xz ./vim
-        - zip -r ${ARCHIVE}.zip ./vim
+        - zip -q -r ${ARCHIVE}.zip ./vim
         - cd -
         - export TRAVIS_TAG="${TRAVIS_COMMIT::7}-${TRAVIS_BUILD_ID}"
         - git tag "${TRAVIS_TAG}"
@@ -110,7 +110,6 @@ jobs:
           packages:
             - ccache
             - coreutils
-            - gettext
             - gnu-sed
             - lua@5.1
             - luajit
@@ -120,7 +119,7 @@ jobs:
       env:
         - ARCHIVE=vim-${TRAVIS_OS_NAME}
         - DATADIR=/usr/share
-        - GETTEXT=$(brew --prefix gettext)
+        - GETTEXT=/tmp/vim/share/gettext
         - GUILT=/tmp/opt/guilt
         - LUA_PREFIX=$(brew --prefix)
         - PATH=${GUILT}/bin:${GETTEXT}/bin:/usr/local/opt/ccache/libexec:${PATH}
@@ -128,6 +127,14 @@ jobs:
         - make clone-guilt
         - gsed -i.bak -r -e 's|\<readlink\>|greadlink|g' ./guilt/guilt
         - make -C ./guilt PREFIX=${GUILT} install
+        - curl -L -O https://ftp.gnu.org/pub/gnu/gettext/gettext-0.20.tar.xz
+        - tar xf ./gettext-0.20.tar.xz
+        - cd ./gettext-*
+        - ./configure --prefix=/tmp/vim/share/gettext --disable-java --disable-c++ >/dev/null 2>&1
+        - make >/dev/null 2>&1
+        - make install >/dev/null 2>&1
+        - rm -rf /tmp/vim/share/gettext/share/doc
+        - cd -
       script:
         - true
       before_deploy:
@@ -139,10 +146,11 @@ jobs:
         - cd -
         - gsed -i.bak -r -e 's|\<root\>|travis|g' ./vim-kaoriya/build/freebsd/Makefile
         - make -C ./vim-kaoriya/build/freebsd VIM_DIR=/tmp/vim/share/vim kaoriya-install
+        - install_name_tool -change '/tmp/vim/share/gettext/lib/libintl.7.dylib' '@executable_path/../share/gettext/lib/libintl.7.dylib' /tmp/vim/bin/vim
         - cd /tmp
         - tar czf ${ARCHIVE}.tar.gz ./vim
         - tar cJf ${ARCHIVE}.tar.xz ./vim
-        - zip -r ${ARCHIVE}.zip ./vim
+        - zip -q -r ${ARCHIVE}.zip ./vim
         - cd -
         - export TRAVIS_TAG="${TRAVIS_COMMIT::7}-${TRAVIS_BUILD_ID}"
         - git tag "${TRAVIS_TAG}"
