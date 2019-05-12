@@ -69,6 +69,7 @@ jobs:
       before_install:
         - export set CC='ccache gcc'
         - export set CXX='ccache g++'
+        - ccache -s
       install:
         - make clone-guilt
         - make -C ./guilt PREFIX=${GUILT} install
@@ -130,6 +131,7 @@ jobs:
       before_install:
         - export set CC='ccache clang'
         - export set CXX='ccache clang++'
+        - ccache -s
       install:
         - make clone-guilt
         - gsed -i.bak -r -e 's|\<readlink\>|greadlink|g' ./guilt/guilt
