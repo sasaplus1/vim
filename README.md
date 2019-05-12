@@ -22,6 +22,14 @@ $ curl -LO https://github.com/sasaplus1/vim/releases/latest/download/vim-linux.t
 $ tar xvf vim-linux.tar.xz
 ```
 
+## Setup
+
+add the below to `~/.bashrc`:
+
+```sh
+alias vim='/path/to/vim/bin/pvim'
+```
+
 ## Dockerfile
 
 - [Dockerfile](/Dockerfile)
