@@ -3,7 +3,6 @@
 set -e
 set -o pipefail
 set -u
-set -x
 
 __main() {
   local readlink=$(type -tP readlink)
