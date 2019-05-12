@@ -79,10 +79,10 @@ clone-vim-kaoriya: ## clone koron/vim-kaoriya
 .PHONY: create-symlinks
 create-symlinks: ## create symbolic links to pvim
 	ln -s pvim pex
-	ln -s pvim prview
-	ln -s pvim prvim
 	ln -s pvim pview
 	ln -s pvim pvimdiff
+	ln -s pvim rpview
+	ln -s pvim rpvim
 
 .PHONY: print-configure
 print-configure: ## print configure options

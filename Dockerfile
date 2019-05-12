@@ -44,9 +44,8 @@ RUN sed -i.bak -r -e 's|\<root\>|travis|g' ./vim-kaoriya/build/xubuntu/Makefile 
 
 COPY --chown=travis:travis ./pvim "${prefix}/bin/pvim"
 
-RUN cd "${prefix}/bin" && \
-  make create-symlinks -C "${OLDPWD}" && \
-  cd -
+RUN make create-symlinks && \
+  mv pex pview pvimdiff rpview rpvim "${prefix}/bin/"
 
 RUN printf -- '\n\n%s\n' "PATH=${prefix}/bin:\$PATH" >> ${HOME}/.bashrc && \
   "${prefix}/bin/pvim" --version
