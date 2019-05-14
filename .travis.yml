@@ -136,8 +136,8 @@ jobs:
         - make clone-guilt
         - gsed -i.bak -r -e 's|\<readlink\>|greadlink|g' ./guilt/guilt
         - make -C ./guilt PREFIX=${GUILT} install
-        - curl -L -O https://ftp.gnu.org/pub/gnu/gettext/gettext-0.20.tar.xz
-        - tar xf ./gettext-0.20.tar.xz
+        - curl -L -O https://ftp.gnu.org/pub/gnu/gettext/gettext-0.20.1.tar.xz
+        - tar xf ./gettext-*.tar.xz
         - cd ./gettext-*
         - ./configure --prefix=${GETTEXT} --disable-silent-rules --disable-dependency-tracking --disable-java --disable-csharp --disable-c++ --without-emacs --without-git --without-bzip2 --without-xz
         - make -j $(make --no-print-directory -C ../ print-cpu-count)
