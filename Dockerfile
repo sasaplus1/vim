@@ -37,7 +37,7 @@ RUN make apply-patch
 RUN cd ./vim-kaoriya/vim && \
   ./configure --prefix="${prefix}" $(make --no-print-directory -C ../../ print-configure) && \
   make -j $(make --no-print-directory -C ../../ print-cpu-count) DATADIR=${datadir} && \
-  make -j $(make --no-print-directory -C ../../ print-cpu-count) install
+  make install
 
 RUN sed -i.bak -r -e 's|\<root\>|travis|g' ./vim-kaoriya/build/xubuntu/Makefile && \
   make -C ./vim-kaoriya/build/xubuntu VIM_DIR="${prefix}/share/vim" install

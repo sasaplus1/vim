@@ -78,7 +78,7 @@ jobs:
         - cd ./vim-kaoriya/vim
         - ./configure --prefix=/tmp/vim $(make --no-print-directory -C ../../ print-configure)
         - make -j $(make --no-print-directory -C ../../ print-cpu-count) DATADIR=${DATADIR}
-        - make -j $(make --no-print-directory -C ../../ print-cpu-count) install
+        - make install
         - cd -
         - sed -i.bak -r -e 's|\<root\>|travis|g' ./vim-kaoriya/build/xubuntu/Makefile
         - make -C ./vim-kaoriya/build/xubuntu VIM_DIR=/tmp/vim/share/vim install
@@ -141,7 +141,7 @@ jobs:
         - cd ./gettext-*
         - ./configure --prefix=$GETEXT --disable-silent-rules --disable-dependency-tracking --disable-java --disable-csharp --disable-c++ --without-emacs --without-git --without-bzip2 --without-xz >/dev/null 2>&1
         - make -j $(make --no-print-directory -C ../ print-cpu-count) >/dev/null 2>&1
-        - make -j $(make --no-print-directory -C ../ print-cpu-count) install >/dev/null 2>&1
+        - make install >/dev/null 2>&1
         - rm -rf /tmp/vim/share/gettext/share/doc
         - cd -
       script:
@@ -149,7 +149,7 @@ jobs:
         - cd ./vim-kaoriya/vim
         - CFLAGS=-I${GETTEXT}/include LDFLAGS=-L${GETTEXT}/lib ./configure --prefix=/tmp/vim $(make --no-print-directory -C ../../ print-configure)
         - make -j $(make --no-print-directory -C ../../ print-cpu-count) DATADIR=${DATADIR}
-        - make -j $(make --no-print-directory -C ../../ print-cpu-count) install
+        - make install
         - cd -
         - gsed -i.bak -r -e 's|\<root\>|travis|g' ./vim-kaoriya/build/freebsd/Makefile
         - make -C ./vim-kaoriya/build/freebsd VIM_DIR=/tmp/vim/share/vim kaoriya-install
