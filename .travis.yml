@@ -139,9 +139,9 @@ jobs:
         - curl -L -O https://ftp.gnu.org/pub/gnu/gettext/gettext-0.20.tar.xz
         - tar xf ./gettext-0.20.tar.xz
         - cd ./gettext-*
-        - ./configure --prefix=${GETTEXT} --disable-silent-rules --disable-dependency-tracking --disable-java --disable-csharp --disable-c++ --without-emacs --without-git --without-bzip2 --without-xz >/dev/null 2>&1
-        - make -j $(make --no-print-directory -C ../ print-cpu-count) >/dev/null 2>&1
-        - make install >/dev/null 2>&1
+        - ./configure --prefix=${GETTEXT} --disable-silent-rules --disable-dependency-tracking --disable-java --disable-csharp --disable-c++ --without-emacs --without-git --without-bzip2 --without-xz
+        - make -j $(make --no-print-directory -C ../ print-cpu-count)
+        - make install
         - rm -rf /tmp/vim/share/gettext/share/doc
         - cd -
       script:
