@@ -139,7 +139,18 @@ jobs:
         - curl -L -O https://ftp.gnu.org/pub/gnu/gettext/gettext-0.20.1.tar.xz
         - tar xf ./gettext-*.tar.xz
         - cd ./gettext-*
-        - ./configure --prefix=${GETTEXT} --disable-silent-rules --disable-dependency-tracking --disable-java --disable-csharp --disable-c++ --without-emacs --without-git --without-bzip2 --without-xz
+        - >-
+          ./configure
+          --prefix=${GETTEXT}
+          --disable-silent-rules
+          --disable-dependency-tracking
+          --disable-java
+          --disable-csharp
+          --disable-c++
+          --without-emacs
+          --without-git
+          --without-bzip2
+          --without-xz
         - make -j $(make --no-print-directory -C ../ print-cpu-count)
         - make install
         - rm -rf /tmp/vim/share/gettext/share/doc
@@ -147,13 +158,23 @@ jobs:
       script:
         - make set-git-user clone-vim-kaoriya apply-patch
         - cd ./vim-kaoriya/vim
-        - CFLAGS=-I${GETTEXT}/include LDFLAGS=-L${GETTEXT}/lib ./configure --prefix=/tmp/vim $(make --no-print-directory -C ../../ print-configure)
+        - >-
+          CFLAGS=-I${GETTEXT}/include
+          LDFLAGS=-L${GETTEXT}/lib
+          ./configure
+          --prefix=/tmp/vim
+          $(make --no-print-directory -C ../../ print-configure)
         - make -j $(make --no-print-directory -C ../../ print-cpu-count) DATADIR=${DATADIR}
         - make install
         - cd -
         - gsed -i.bak -r -e 's|\<root\>|travis|g' ./vim-kaoriya/build/freebsd/Makefile
         - make -C ./vim-kaoriya/build/freebsd VIM_DIR=/tmp/vim/share/vim kaoriya-install
-        - install_name_tool -change "$(otool -L /tmp/vim/bin/vim | awk '/libintl/ { print $1 }')" '@executable_path/../share/gettext/lib/libintl.dylib' /tmp/vim/bin/vim
+        - >-
+          install_name_tool
+          -change
+          "$(otool -L /tmp/vim/bin/vim | awk '/libintl/ { print $1 }')"
+          '@executable_path/../share/gettext/lib/libintl.dylib'
+          /tmp/vim/bin/vim
       before_deploy:
         - cd /tmp
         - tar czf ${ARCHIVE}.tar.gz ./vim
