@@ -4,18 +4,21 @@ set -eu
 set -o pipefail
 
 __main() {
-  local support_follow=
+  local readlink=
 
-  if readlink -f >/dev/null 2>&1
+  if readlink -f . >/dev/null 2>&1
   then
-    support_follow=1
+    readlink=$(type -p readlink)
+  elif greadlink -f . >/dev/null 2>&1
+  then
+    readlink=$(type -p greadlink)
   fi
 
   local vim=
 
-  if [ -n "$support_follow" ]
+  if [ -n "$readlink" ]
   then
-    vim="$(dirname "$(readlink -f "$0")")/vim"
+    vim="$(dirname "$($readlink -f "$0")")/vim"
   else
     if [ -L "$0" ]
     then
