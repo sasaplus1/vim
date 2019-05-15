@@ -82,6 +82,8 @@ jobs:
         - cd -
         - sed -i.bak -r -e 's|\<root\>|travis|g' ./vim-kaoriya/build/xubuntu/Makefile
         - make -C ./vim-kaoriya/build/xubuntu VIM_DIR=/tmp/vim/share/vim install
+        - git clone --depth 1 https://github.com/vim-jp/vimdoc-ja.git /tmp/vim/share/vim/plugins/vimdoc-ja
+        - rm -rf /tmp/vim/share/vim/plugins/vimdoc-ja/.git /tmp/vim/share/vim/plugins/vimdoc-ja/.gitignore
         - cp ./pvim /tmp/vim/bin/pvim
         - make create-symlinks
         - mv pex pview pvimdiff rpview rpvim /tmp/vim/bin/
@@ -173,6 +175,8 @@ jobs:
         - cd -
         - gsed -i.bak -r -e 's|\<root\>|travis|g' ./vim-kaoriya/build/freebsd/Makefile
         - make -C ./vim-kaoriya/build/freebsd VIM_DIR=/tmp/vim/share/vim kaoriya-install
+        - git clone --depth 1 https://github.com/vim-jp/vimdoc-ja.git /tmp/vim/share/vim/plugins/vimdoc-ja
+        - rm -rf /tmp/vim/share/vim/plugins/vimdoc-ja/.git /tmp/vim/share/vim/plugins/vimdoc-ja/.gitignore
         - cp ./pvim /tmp/vim/bin/pvim
         - make create-symlinks
         - mv pex pview pvimdiff rpview rpvim /tmp/vim/bin/

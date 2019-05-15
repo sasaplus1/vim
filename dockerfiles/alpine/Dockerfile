@@ -31,6 +31,9 @@ RUN cd ./vim-kaoriya/vim && \
 
 RUN make -C ./vim-kaoriya/build/xubuntu VIM_DIR="${prefix}/share/vim" install
 
+RUN git clone --depth 1 https://github.com/vim-jp/vimdoc-ja.git "${prefix}/share/vim/plugins/vimdoc-ja" && \
+  rm -rf "${prefix}/share/vim/plugins/vimdoc-ja/.git" "${prefix}/share/vim/plugins/vimdoc-ja/.gitignore"
+
 COPY ./pvim "${prefix}/bin/pvim"
 
 RUN make create-symlinks && \
