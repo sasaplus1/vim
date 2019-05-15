@@ -15,11 +15,23 @@ $ curl -LO https://github.com/sasaplus1/vim/releases/latest/download/vim-osx.tar
 $ tar xvf vim-osx.tar.xz
 ```
 
+or
+
+```console
+$ curl -L https://github.com/sasaplus1/vim/releases/latest/download/vim-osx.tar.xz | tar xf -
+```
+
 ### Linux
 
 ```console
 $ curl -LO https://github.com/sasaplus1/vim/releases/latest/download/vim-linux.tar.xz
 $ tar xvf vim-linux.tar.xz
+```
+
+or
+
+```console
+$ curl -L https://github.com/sasaplus1/vim/releases/latest/download/vim-linux.tar.xz | tar xf -
 ```
 
 ## Setup
