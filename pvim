@@ -1,15 +1,12 @@
 #!/bin/bash
 
-set -e
+set -eu
 set -o pipefail
-set -u
 
 __main() {
-  local readlink=$(type -tP readlink)
-
   local support_follow=
 
-  if $readlink -f >/dev/null 2>&1
+  if readlink -f >/dev/null 2>&1
   then
     support_follow=1
   fi
@@ -18,7 +15,7 @@ __main() {
 
   if [ -n "$support_follow" ]
   then
-    vim="$(dirname "$($readlink -f "$0")")/vim"
+    vim="$(dirname "$(readlink -f "$0")")/vim"
   else
     if [ -L "$0" ]
     then
