@@ -82,6 +82,9 @@ jobs:
         - cd -
         - sed -i.bak -r -e 's|\<root\>|travis|g' ./vim-kaoriya/build/xubuntu/Makefile
         - make -C ./vim-kaoriya/build/xubuntu VIM_DIR=/tmp/vim/share/vim install
+        - cp ./pvim /tmp/vim/bin/pvim
+        - make create-symlinks
+        - mv pex pview pvimdiff rpview rpvim /tmp/vim/bin/
       before_deploy:
         - cd /tmp
         - tar czf ${ARCHIVE}.tar.gz ./vim
@@ -101,7 +104,7 @@ jobs:
           all_branches: true
           repo: sasaplus1/vim
       after_deploy:
-        - /tmp/vim/bin/vim --version
+        - /tmp/vim/bin/pvim --version
         - ldd /tmp/vim/bin/vim
     - name: deploy my Vim for macOS
       os: osx
@@ -169,6 +172,9 @@ jobs:
         - cd -
         - gsed -i.bak -r -e 's|\<root\>|travis|g' ./vim-kaoriya/build/freebsd/Makefile
         - make -C ./vim-kaoriya/build/freebsd VIM_DIR=/tmp/vim/share/vim kaoriya-install
+        - cp ./pvim /tmp/vim/bin/pvim
+        - make create-symlinks
+        - mv pex pview pvimdiff rpview rpvim /tmp/vim/bin/
         - >-
           install_name_tool
           -change
