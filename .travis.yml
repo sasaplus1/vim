@@ -154,8 +154,9 @@ jobs:
           --without-git
           --without-bzip2
           --without-xz
-        - make -j $(make --no-print-directory -C ../ print-cpu-count)
-        - make install
+          >/dev/null 2>&1
+        - make -j $(make --no-print-directory -C ../ print-cpu-count) >/dev/null 2>&1
+        - make install >/dev/null 2>&1
         - rm -rf /tmp/vim/share/gettext/share/doc
         - cd -
       script:
