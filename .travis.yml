@@ -63,6 +63,7 @@ jobs:
       env:
         - ARCHIVE=vim-${TRAVIS_OS_NAME}
         - DATADIR=/usr/local/share
+        - GIT_TAG=${TRAVIS_COMMIT::7}
         - GUILT=/opt/guilt
         - PATH=${GUILT}/bin:${PATH}
         - USE_CCACHE=1
@@ -94,8 +95,13 @@ jobs:
         - zip -q -r ${ARCHIVE}.zip ./vim
         - sha256sum vim-* > ${ARCHIVE}-sha256sum.txt
         - cd -
-        - export TRAVIS_TAG="${TRAVIS_COMMIT::7}-${TRAVIS_BUILD_ID}"
-        - git tag "${TRAVIS_TAG}"
+        - curl -fsSLO https://github.com/sasaplus1/vim/releases/download/${GIT_TAG}/${ARCHIVE}-sha256sum.txt
+        - |
+          if [ "$?" -ne 0 ] || ! shasum --check --status ./${ARCHIVE}-sha256sum.txt
+          then
+            export TRAVIS_TAG="${GIT_TAG}"
+            git tag "${TRAVIS_TAG}"
+          fi
       deploy:
         provider: releases
         api_key:
@@ -130,6 +136,7 @@ jobs:
         - ARCHIVE=vim-${TRAVIS_OS_NAME}
         - DATADIR=/usr/local/share
         - GETTEXT=/tmp/vim/share/gettext
+        - GIT_TAG=${TRAVIS_COMMIT::7}
         - GUILT=/tmp/opt/guilt
         - LUA_PREFIX=$(brew --prefix)
         - PATH=${GUILT}/bin:${GETTEXT}/bin:/usr/local/opt/ccache/libexec:${PATH}
@@ -192,10 +199,15 @@ jobs:
         - tar czf ${ARCHIVE}.tar.gz ./vim
         - tar cJf ${ARCHIVE}.tar.xz ./vim
         - zip -q -r ${ARCHIVE}.zip ./vim
-        - shasum -a 256 vim-* > ${ARCHIVE}-sha256sum.txt
+        - shasum --algorithm 256 vim-* > ${ARCHIVE}-sha256sum.txt
         - cd -
-        - export TRAVIS_TAG="${TRAVIS_COMMIT::7}-${TRAVIS_BUILD_ID}"
-        - git tag "${TRAVIS_TAG}"
+        - curl -fsSLO https://github.com/sasaplus1/vim/releases/download/${GIT_TAG}/${ARCHIVE}-sha256sum.txt
+        - |
+          if [ "$?" -ne 0 ] || ! shasum --check --status ./${ARCHIVE}-sha256sum.txt
+          then
+            export TRAVIS_TAG="${GIT_TAG}"
+            git tag "${TRAVIS_TAG}"
+          fi
       deploy:
         provider: releases
         api_key:
