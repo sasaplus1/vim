@@ -95,9 +95,9 @@ jobs:
         - zip -q -r ${ARCHIVE}.zip ./vim
         - sha256sum vim-* > ${ARCHIVE}-sha256sum.txt
         - cd -
-        - curl -fsSLO https://github.com/sasaplus1/vim/releases/download/${GIT_TAG}/${ARCHIVE}-sha256sum.txt
+        - curl -fsSLO https://github.com/sasaplus1/vim/releases/download/${GIT_TAG}/${ARCHIVE}-sha256sum.txt || true
         - |
-          if [ "$?" -ne 0 ] || ! shasum --check --status ./${ARCHIVE}-sha256sum.txt
+          if [ ! -e "${ARCHIVE}-sha256sum.txt" ] || ! shasum --check --status ./${ARCHIVE}-sha256sum.txt
           then
             export TRAVIS_TAG="${GIT_TAG}"
             git tag "${TRAVIS_TAG}"
@@ -201,9 +201,9 @@ jobs:
         - zip -q -r ${ARCHIVE}.zip ./vim
         - shasum --algorithm 256 vim-* > ${ARCHIVE}-sha256sum.txt
         - cd -
-        - curl -fsSLO https://github.com/sasaplus1/vim/releases/download/${GIT_TAG}/${ARCHIVE}-sha256sum.txt
+        - curl -fsSLO https://github.com/sasaplus1/vim/releases/download/${GIT_TAG}/${ARCHIVE}-sha256sum.txt || true
         - |
-          if [ "$?" -ne 0 ] || ! shasum --check --status ./${ARCHIVE}-sha256sum.txt
+          if [ ! -e "${ARCHIVE}-sha256sum.txt" ] || ! shasum --check --status ./${ARCHIVE}-sha256sum.txt
           then
             export TRAVIS_TAG="${GIT_TAG}"
             git tag "${TRAVIS_TAG}"
