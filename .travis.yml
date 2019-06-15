@@ -97,7 +97,7 @@ jobs:
         - cd -
         - curl -fsSLO https://github.com/sasaplus1/vim/releases/download/${GIT_TAG}/${ARCHIVE}-sha256sum.txt || true
         - |
-          if [ ! -e "${ARCHIVE}-sha256sum.txt" ] || ! ! cmp -s ./${ARCHIVE}-sha256sum.txt /tmp/${ARCHIVE}-sha256sum.txt
+          if [ ! -e "${ARCHIVE}-sha256sum.txt" ] || ! cmp -s ./${ARCHIVE}-sha256sum.txt /tmp/${ARCHIVE}-sha256sum.txt
           then
             export TRAVIS_TAG="${GIT_TAG}"
             git tag "${TRAVIS_TAG}"
