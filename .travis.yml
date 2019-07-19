@@ -63,7 +63,7 @@ jobs:
       env:
         - ARCHIVE=vim-${TRAVIS_OS_NAME}
         - DATADIR=/usr/local/share
-        - GIT_TAG=${TRAVIS_COMMIT::7}
+        - GIT_TAG=${TRAVIS_COMMIT::7}-${TRAVIS_BUILD_ID}
         - GUILT=/opt/guilt
         - PATH=${GUILT}/bin:${PATH}
         - USE_CCACHE=1
@@ -136,7 +136,7 @@ jobs:
         - ARCHIVE=vim-${TRAVIS_OS_NAME}
         - DATADIR=/usr/local/share
         - GETTEXT=/tmp/vim/share/gettext
-        - GIT_TAG=${TRAVIS_COMMIT::7}
+        - GIT_TAG=${TRAVIS_COMMIT::7}-${TRAVIS_BUILD_ID}
         - GUILT=/tmp/opt/guilt
         - LUA_PREFIX=$(brew --prefix)
         - PATH=${GUILT}/bin:${GETTEXT}/bin:/usr/local/opt/ccache/libexec:${PATH}
