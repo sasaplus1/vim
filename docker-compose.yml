@@ -1,0 +1,19 @@
+version: '3.4'
+
+services:
+  test-alpine:
+    build:
+      context: .
+      dockerfile: ./dockerfiles/alpine/Dockerfile
+    command:
+      - /opt/vim/bin/vim
+      - --version
+    image: sasaplus1/vim-alpine
+  test-ubuntu:
+    build:
+      context: .
+      dockerfile: ./dockerfiles/ubuntu/Dockerfile
+    command:
+      - /opt/vim/bin/vim
+      - --version
+    image: sasaplus1/vim-ubuntu
