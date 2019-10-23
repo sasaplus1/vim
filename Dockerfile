@@ -1,56 +1,60 @@
-FROM travisci/ci-sardonyx:packer-1554885359-f909ac5
+ARG image
+
+FROM ${image}
+
+ARG setup
+ARG configurations
 
 ARG datadir=/usr/local/share
 ARG prefix=/opt/vim
-ARG slug=sasaplus1/vim
 
-# NOTE: requires: autoconf git make
-# NOTE: requires if compile: build-essential libncurses-dev
-# NOTE: requires if use +gettext: gettext
-# NOTE: requires if use +lua: lua5.1 liblua5.1-dev luajit libluajit-5.1-dev
-# NOTE: requires if use +python: python python-dev
-# NOTE: requires if use +python3: python3 python3-dev
-RUN apt update && apt install --yes \
-  autoconf git make \
-  build-essential libncurses-dev \
-  gettext \
-  lua5.1 liblua5.1-dev luajit libluajit-5.1-dev \
-  python python-dev \
-  python3 python3-dev
+RUN eval "${setup}"
 
-WORKDIR /home/travis/${slug}
+WORKDIR /root
 
-RUN chown -R travis:travis /home/travis/${slug}
+RUN git config --global user.name sasaplus1 && \
+  git config --global user.email '<>'
 
-USER travis
+RUN git clone --depth 1 https://github.com/koron/guilt.git && \
+  git clone --depth 1 https://github.com/koron/vim-kaoriya.git
 
-COPY --chown=travis:travis ./Makefile ./Makefile
+RUN cd ./vim-kaoriya && \
+  git submodule update --init -- ./patches ./vim
 
-RUN make set-git-user clone
-
-RUN make -C ./guilt PREFIX=/opt/guilt install
+RUN cd ./guilt && \
+  make PREFIX=/opt/guilt install
 
 ENV PATH /opt/guilt/bin:${PATH}
 
-RUN make apply-patch
+RUN cd ./vim-kaoriya/vim && \
+  git checkout -b v$(printf -- 'all:\n\t@printf -- $(VIM_VER)' | make -f /root/vim-kaoriya/VERSION -f -) && \
+  git config --local guilt.patchesdir ../patches && \
+  guilt init
+RUN cd ./vim-kaoriya && \
+  cp ./patches/master/* ./patches/v$(printf -- 'all:\n\t@printf -- $(VIM_VER)' | make -f ./VERSION -f -)
+RUN cd ./vim-kaoriya/vim/src && \
+  guilt push --all && \
+  make autoconf
 
 RUN cd ./vim-kaoriya/vim && \
-  ./configure --prefix="${prefix}" $(make --no-print-directory -C ../../ print-configure) && \
-  make -j $(make --no-print-directory -C ../../ print-cpu-count) DATADIR=${datadir} && \
+  eval "./configure --prefix=${prefix} ${configurations}" && \
+  make -j $(nproc) DATADIR=${datadir}  && \
   make install
 
-RUN sed -i.bak -r -e 's|\<root\>|travis|g' ./vim-kaoriya/build/xubuntu/Makefile && \
-  make -C ./vim-kaoriya/build/xubuntu VIM_DIR="${prefix}/share/vim" install
+RUN make -C ./vim-kaoriya/build/xubuntu VIM_DIR="${prefix}/share/vim" install
 
 RUN git clone --depth 1 https://github.com/vim-jp/vimdoc-ja.git "${prefix}/share/vim/plugins/vimdoc-ja" && \
   rm -rf "${prefix}/share/vim/plugins/vimdoc-ja/.git" "${prefix}/share/vim/plugins/vimdoc-ja/.gitignore"
 
-COPY --chown=travis:travis ./pvim "${prefix}/bin/pvim"
+COPY ./pvim "${prefix}/bin/pvim"
 
-RUN make create-symlinks && \
-  mv pex pview pvimdiff rpview rpvim "${prefix}/bin/"
+RUN cd "${prefix}/bin" && \
+  ln -s pvim pex && \
+  ln -s pvim pview && \
+  ln -s pvim pvimdiff && \
+  ln -s pvim rpview && \
+  ln -s pvim rpvim
 
-RUN printf -- '\n\n%s\n' "PATH=${prefix}/bin:\$PATH" >> ${HOME}/.bashrc && \
-  "${prefix}/bin/pvim" --version
+RUN printf -- '\n\n%s\n' "PATH=${prefix}/bin:\$PATH" >> ${HOME}/.bashrc
 
 ENV PATH ${prefix}/bin:${PATH}
