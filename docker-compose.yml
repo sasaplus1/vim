@@ -44,6 +44,12 @@ services:
       args:
         configurations: *configurations
         image: ubuntu:latest
+        # NOTE: requires: autoconf git make
+        # NOTE: requires if compile: build-essential libncurses-dev
+        # NOTE: requires if use +gettext: gettext
+        # NOTE: requires if use +lua: lua5.1 liblua5.1-dev luajit libluajit-5.1-dev
+        # NOTE: requires if use +python: python python-dev
+        # NOTE: requires if use +python3: python3 python3-dev
         setup: >
           apt update --yes &&
           apt install --yes
