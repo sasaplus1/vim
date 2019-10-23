@@ -42,14 +42,19 @@ add the below to `~/.bashrc`:
 alias vim='/path/to/vim/bin/pvim'
 ```
 
-## Dockerfile
+## Build Docker container
 
-- [Dockerfile](/Dockerfile)
-    - build within Travis-CI container-based image
-- [dockerfiles/alpine/Dockerfile](/dockerfiles/alpine/Dockerfile)
-    - build within Alpine image
-- [dockerfiles/ubuntu/Dockerfile](/dockerfiles/ubuntu/Dockerfile)
-    - build within Ubuntu image
+### Ubuntu
+
+```console
+$ docker-compose run --rm ubuntu
+```
+
+### Alpine Linux
+
+```console
+$ docker-compose run --rm alpine
+```
 
 ## Related
 
