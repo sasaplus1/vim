@@ -12,14 +12,14 @@ my KaoriYa Vim
 ### macOS
 
 ```console
-$ curl -LO https://github.com/sasaplus1/vim/releases/latest/download/vim-osx.tar.xz
-$ tar xvf vim-osx.tar.xz
+$ curl -LO https://github.com/sasaplus1/vim/releases/latest/download/vim-macos.tar.xz
+$ tar xvf vim-macos.tar.xz
 ```
 
 or
 
 ```console
-$ curl -L https://github.com/sasaplus1/vim/releases/latest/download/vim-osx.tar.xz | tar xf -
+$ curl -L https://github.com/sasaplus1/vim/releases/latest/download/vim-macos.tar.xz | tar xf -
 ```
 
 ### Linux
@@ -43,7 +43,7 @@ add the below to `~/.bashrc`:
 alias vim='/path/to/vim/bin/pvim'
 ```
 
-## Build Docker container
+## run Docker container
 
 ### Ubuntu
 

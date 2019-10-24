@@ -38,7 +38,7 @@ services:
           python2 python2-dev
           python3 python3-dev
       context: .
-    image: sasaplus1/vim-alpine
+    image: sasaplus1/vim:alpine
   ubuntu:
     build:
       args:
@@ -60,4 +60,4 @@ services:
           python python-dev
           python3 python3-dev
       context: .
-    image: sasaplus1/vim-ubuntu
+    image: sasaplus1/vim:ubuntu
