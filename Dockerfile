@@ -58,3 +58,7 @@ RUN cd "${prefix}/bin" && \
 RUN printf -- '\n\n%s\n' "PATH=${prefix}/bin:\$PATH" >> ${HOME}/.bashrc
 
 ENV PATH ${prefix}/bin:${PATH}
+
+RUN cd /opt && \
+  tar cfz vim.tar.gz vim && \
+  mv vim.tar.gz /tmp
