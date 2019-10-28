@@ -1,0 +1,67 @@
+name: build
+
+on:
+  - push
+  - pull_request
+
+jobs:
+  linux:
+    name: build Vim for Linux
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v1
+        with:
+          fetch-depth: 1
+      - run: docker-compose build ubuntu
+      - run: docker-compose run --detach --rm ubuntu tail -f /dev/null
+      - run: docker cp $(docker ps -q):/tmp/vim.tar.gz .
+      - run: docker-compose down
+      - run: tar fxz vim.tar.gz
+      - run: mv vim vim-linux
+      - run: tar cfz vim-linux.tar.gz ./vim-linux
+      - run: tar cfJ vim-linux.tar.xz ./vim-linux
+      - run: zip -qr vim-linux.zip ./vim-linux
+      - run: sha256sum vim-linux.* > vim-linux-sha256sum.txt
+      - run: vim-linux/bin/pvim --version
+      - run: ldd vim-linux/bin/vim
+      - id: create_release
+        uses: actions/create-release@v1.0.0
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          tag_name: release-${{ github.sha }}
+          release_name: ${{ github.sha }}
+          draft: false
+          prerelease: false
+      - uses: actions/upload-release-asset@v1.0.1
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          upload_url: ${{ steps.create_release.outputs.upload_url }}
+          asset_path: ./vim-linux.tar.gz
+          asset_name: vim-linux.tar.gz
+          asset_content_type: application/gzip
+      - uses: actions/upload-release-asset@v1.0.1
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          upload_url: ${{ steps.create_release.outputs.upload_url }}
+          asset_path: ./vim-linux.tar.xz
+          asset_name: vim-linux.tar.xz
+          asset_content_type: application/x-xz
+      - uses: actions/upload-release-asset@v1.0.1
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          upload_url: ${{ steps.create_release.outputs.upload_url }}
+          asset_path: ./vim-linux.zip
+          asset_name: vim-linux.zip
+          asset_content_type: application/zip
+      - uses: actions/upload-release-asset@v1.0.1
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          upload_url: ${{ steps.create_release.outputs.upload_url }}
+          asset_path: ./vim-linux-sha256sum.txt
+          asset_name: vim-linux-sha256sum.txt
+          asset_content_type: text/plain
