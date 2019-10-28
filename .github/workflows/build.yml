@@ -17,51 +17,255 @@ jobs:
       - run: docker cp $(docker ps -q):/tmp/vim.tar.gz .
       - run: docker-compose down
       - run: tar fxz vim.tar.gz
+      - run: vim/bin/pvim --version
+      - run: ldd vim/bin/vim
       - run: mv vim vim-linux
       - run: tar cfz vim-linux.tar.gz ./vim-linux
       - run: tar cfJ vim-linux.tar.xz ./vim-linux
       - run: zip -qr vim-linux.zip ./vim-linux
       - run: sha256sum vim-linux.* > vim-linux-sha256sum.txt
-      - run: vim-linux/bin/pvim --version
-      - run: ldd vim-linux/bin/vim
+      - uses: actions/upload-artifact@master
+        with:
+          name: vim-linux.tar.gz
+          path: vim-linux.tar.gz
+      - uses: actions/upload-artifact@master
+        with:
+          name: vim-linux.tar.xz
+          path: vim-linux.tar.xz
+      - uses: actions/upload-artifact@master
+        with:
+          name: vim-linux.zip
+          path: vim-linux.zip
+      - uses: actions/upload-artifact@master
+        with:
+          name: vim-linux-sha256sum.txt
+          path: vim-linux-sha256sum.txt
+  macOS:
+    name: build Vim for macOS
+    runs-on: macOS-latest
+    env:
+      configurations: >
+        --enable-fail-if-missing
+        --disable-smack
+        --disable-selinux
+        --disable-xsmp
+        --disable-xsmp-interact
+        --enable-luainterp=dynamic
+        --enable-pythoninterp=dynamic
+        --enable-python3interp=dynamic
+        --enable-cscope
+        --disable-netbeans
+        --enable-terminal
+        --enable-multibyte
+        --disable-rightleft
+        --disable-arabic
+        --enable-gui=no
+        --with-compiledby=sasa+1
+        --with-features=huge
+        --with-luajit
+        --without-x
+        --with-tlib=ncurses
+      datadir: /usr/local/share
+      prefix: /var/tmp/vim
+    steps:
+      - uses: actions/checkout@v1
+        with:
+          fetch-depth: 1
+      - run: brew update
+      - run: >
+          brew install
+          autoconf
+          coreutils
+          gnu-sed
+          lua@5.1
+          luajit
+          python@2
+          python@3
+          || true
+      - run: >
+          git config --global user.name sasaplus1 &&
+          git config --global user.email '<>'
+      - run: >
+          git clone --depth 1 https://github.com/koron/guilt.git &&
+          git clone --depth 1 https://github.com/koron/vim-kaoriya.git
+      - run: >
+          cd vim-kaoriya &&
+          git submodule update --init -- ./patches ./vim
+      - run: gsed -i.bak -r -e 's|\<readlink\>|greadlink|g' ./guilt/guilt
+      - run: make -C ./guilt PREFIX=/usr/local install
+      - run: curl -fsSLO https://ftp.gnu.org/pub/gnu/gettext/gettext-0.20.1.tar.xz
+      - run: tar fvx ./gettext-*.tar.xz
+      - run: rm ./gettext-*.tar.xz
+      - run: >
+          cd ./gettext-* &&
+          ./configure
+          --prefix=${prefix}/share/gettext
+          --disable-silent-rules
+          --disable-dependency-tracking
+          --disable-java
+          --disable-csharp
+          --disable-c++
+          --without-emacs
+          --without-git
+          --without-bzip2
+          --without-xz
+      - run: make -C ./gettext-* -j $(getconf _NPROCESSORS_ONLN)
+      - run: make -C ./gettext-* install
+      - run: rm -rf ${prefix}/share/gettext/share/doc
+      - run: >
+          cd ./vim-kaoriya/vim &&
+          git checkout -b v$(printf -- 'all:\n\t@printf -- $(VIM_VER)' | make -f ../VERSION -f -) &&
+          git config --local guilt.patchesdir ../patches &&
+          guilt init
+      - run: >
+          cd ./vim-kaoriya &&
+          cp ./patches/master/* ./patches/v$(printf -- 'all:\n\t@printf -- $(VIM_VER)' | make -f ./VERSION -f -)
+      - run: >
+          cd ./vim-kaoriya/vim/src &&
+          guilt push --all
+      - run: make -C ./vim-kaoriya/vim/src autoconf
+      - run: >
+          export LUA_PREFIX="$(brew --prefix)" &&
+          export CFLAGS="-I${prefix}/share/gettext/include" &&
+          export LDFLAGS="-L${prefix}/share/gettext/lib" &&
+          cd ./vim-kaoriya/vim &&
+          eval "./configure --prefix=${prefix} ${configurations}" &&
+          make -j $(getconf _NPROCESSORS_ONLN) DATADIR=${datadir} &&
+          make install
+      - run: gsed -i.bak -r -e "s|\<root\>|$(whoami)|g" ./vim-kaoriya/build/freebsd/Makefile
+      - run: make -C ./vim-kaoriya/build/freebsd VIM_DIR="${prefix}/share/vim" kaoriya-install
+      - run: >
+          git clone --depth 1 https://github.com/vim-jp/vimdoc-ja.git "${prefix}/share/vim/plugins/vimdoc-ja" &&
+          rm -rf "${prefix}/share/vim/plugins/vimdoc-ja/.git" "${prefix}/share/vim/plugins/vimdoc-ja/.gitignore"
+      - run: cp ./pvim "${prefix}/bin/pvim"
+      - run: >
+          cd "${prefix}/bin" &&
+          ln -s pvim pex &&
+          ln -s pvim pview &&
+          ln -s pvim pvimdiff &&
+          ln -s pvim rpview &&
+          ln -s pvim rpvim
+      - run: >
+          install_name_tool
+          -change
+          "$(otool -L ${prefix}/bin/vim | awk '/libintl/ { print $1 }')"
+          '@executable_path/../share/gettext/lib/libintl.dylib'
+          "${prefix}/bin/vim"
+      - run: >
+          "${prefix}/bin/pvim" --version
+      - run: otool -L "${prefix}/bin/vim"
+      - run: mv "${prefix}" ./$(basename "${prefix}")-macos
+      - run: tar cfz vim-macos.tar.gz ./vim-macos
+      - run: tar cfJ vim-macos.tar.xz ./vim-macos
+      - run: zip -qr vim-macos.zip ./vim-macos
+      - run: sha256sum vim-macos.* > vim-macos-sha256sum.txt
+      - uses: actions/upload-artifact@master
+        with:
+          name: vim-macos.tar.gz
+          path: vim-macos.tar.gz
+      - uses: actions/upload-artifact@master
+        with:
+          name: vim-macos.tar.xz
+          path: vim-macos.tar.xz
+      - uses: actions/upload-artifact@master
+        with:
+          name: vim-macos.zip
+          path: vim-macos.zip
+      - uses: actions/upload-artifact@master
+        with:
+          name: vim-macos-sha256sum.txt
+          path: vim-macos-sha256sum.txt
+  release:
+    name: create release and upload assets
+    runs-on: ubuntu-latest
+    needs:
+      - linux
+      - macOS
+    env:
+      GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+    steps:
+      - uses: actions/download-artifact@master
+        with:
+          name: vim-linux.tar.gz
+          path: .
+      - uses: actions/download-artifact@master
+        with:
+          name: vim-linux.tar.xz
+          path: .
+      - uses: actions/download-artifact@master
+        with:
+          name: vim-linux.zip
+          path: .
+      - uses: actions/download-artifact@master
+        with:
+          name: vim-linux-sha256sum.txt
+          path: .
+      - uses: actions/download-artifact@master
+        with:
+          name: vim-macos.tar.gz
+          path: .
+      - uses: actions/download-artifact@master
+        with:
+          name: vim-macos.tar.xz
+          path: .
+      - uses: actions/download-artifact@master
+        with:
+          name: vim-macos.zip
+          path: .
+      - uses: actions/download-artifact@master
+        with:
+          name: vim-macos-sha256sum.txt
+          path: .
       - id: create_release
         uses: actions/create-release@v1.0.0
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
           tag_name: release-${{ github.sha }}
           release_name: ${{ github.sha }}
-          draft: false
-          prerelease: false
       - uses: actions/upload-release-asset@v1.0.1
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
           upload_url: ${{ steps.create_release.outputs.upload_url }}
-          asset_path: ./vim-linux.tar.gz
+          asset_path: vim-linux.tar.gz
           asset_name: vim-linux.tar.gz
           asset_content_type: application/gzip
       - uses: actions/upload-release-asset@v1.0.1
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
           upload_url: ${{ steps.create_release.outputs.upload_url }}
-          asset_path: ./vim-linux.tar.xz
+          asset_path: vim-linux.tar.xz
           asset_name: vim-linux.tar.xz
           asset_content_type: application/x-xz
       - uses: actions/upload-release-asset@v1.0.1
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
           upload_url: ${{ steps.create_release.outputs.upload_url }}
-          asset_path: ./vim-linux.zip
+          asset_path: vim-linux.zip
           asset_name: vim-linux.zip
           asset_content_type: application/zip
       - uses: actions/upload-release-asset@v1.0.1
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
           upload_url: ${{ steps.create_release.outputs.upload_url }}
-          asset_path: ./vim-linux-sha256sum.txt
+          asset_path: vim-linux-sha256sum.txt
           asset_name: vim-linux-sha256sum.txt
+          asset_content_type: text/plain
+      - uses: actions/upload-release-asset@v1.0.1
+        with:
+          upload_url: ${{ steps.create_release.outputs.upload_url }}
+          asset_path: vim-macos.tar.gz
+          asset_name: vim-macos.tar.gz
+          asset_content_type: application/gzip
+      - uses: actions/upload-release-asset@v1.0.1
+        with:
+          upload_url: ${{ steps.create_release.outputs.upload_url }}
+          asset_path: vim-macos.tar.xz
+          asset_name: vim-macos.tar.xz
+          asset_content_type: application/x-xz
+      - uses: actions/upload-release-asset@v1.0.1
+        with:
+          upload_url: ${{ steps.create_release.outputs.upload_url }}
+          asset_path: vim-macos.zip
+          asset_name: vim-macos.zip
+          asset_content_type: application/zip
+      - uses: actions/upload-release-asset@v1.0.1
+        with:
+          upload_url: ${{ steps.create_release.outputs.upload_url }}
+          asset_path: vim-macos-sha256sum.txt
+          asset_name: vim-macos-sha256sum.txt
           asset_content_type: text/plain
