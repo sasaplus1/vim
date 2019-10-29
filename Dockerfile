@@ -27,7 +27,7 @@ RUN cd ./guilt && \
 ENV PATH /opt/guilt/bin:${PATH}
 
 RUN cd ./vim-kaoriya/vim && \
-  git checkout -b v$(printf -- 'all:\n\t@printf -- $(VIM_VER)' | make -f /root/vim-kaoriya/VERSION -f -) && \
+  git checkout -b v$(printf -- 'all:\n\t@printf -- $(VIM_VER)' | make -f ../VERSION -f -) && \
   git config --local guilt.patchesdir ../patches && \
   guilt init
 RUN cd ./vim-kaoriya && \
@@ -38,7 +38,7 @@ RUN cd ./vim-kaoriya/vim/src && \
 
 RUN cd ./vim-kaoriya/vim && \
   eval "./configure --prefix=${prefix} ${configurations}" && \
-  make -j $(nproc) DATADIR=${datadir}  && \
+  make -j $(nproc) DATADIR=${datadir} && \
   make install
 
 RUN make -C ./vim-kaoriya/build/xubuntu VIM_DIR="${prefix}/share/vim" install
