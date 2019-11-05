@@ -5,11 +5,10 @@ on:
   - pull_request
 
 jobs:
-  test:
-    name: test
+  docker:
+    name: build Docker image
     env:
       COMPOSE_DOCKER_CLI_BUILD: 1
-      TZ: Asia/Tokyo
     runs-on: ubuntu-latest
     strategy:
       matrix:
@@ -26,3 +25,11 @@ jobs:
           /opt/vim/bin/vim --version
         env:
           LANG: C
+  shellcheck:
+    name: lint shell script
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v1
+        with:
+          fetch-depth: 1
+      - run: make lint

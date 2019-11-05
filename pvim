@@ -1,7 +1,6 @@
 #!/bin/bash
 
-set -eu
-set -o pipefail
+set -euo pipefail
 
 __main() {
   local readlink=
@@ -22,16 +21,19 @@ __main() {
   else
     if [ -L "$0" ]
     then
-      local current_dir=$(pwd -P)
+      local current_dir=
+
+      current_dir=$(pwd -P)
+
       local target_dir="$0"
 
-      cd "$(dirname $target_dir)"
+      cd "$(dirname "$target_dir")"
 
       while [ -L "$target_dir" ]
       do
-        target_dir=$(readlink $target_dir)
-        cd "$(dirname $target_dir)"
-        target_dir=$(basename $target_dir)
+        target_dir=$(readlink "$target_dir")
+        cd "$(dirname "$target_dir")"
+        target_dir=$(basename "$target_dir")
       done
 
       vim="$(pwd -P)/vim"
@@ -48,28 +50,40 @@ __main() {
     exit 1
   fi
 
-  local name="$(basename "$0")"
+  local name=
+
+  name="$(basename "$0")"
+
   local options=
 
   case $name in
     r*)
-      options="$options -Z"
+      options="${options:--}Z"
       ;;
   esac
 
   case $name in
     *vimdiff)
-      options="$options -d"
+      options="${options:--}d"
       ;;
     *view)
-      options="$options -R"
+      options="${options:--}R"
       ;;
     *ex)
-      options="$options -e"
+      options="${options:--}e"
       ;;
   esac
 
-  VIM="$(dirname "$(dirname "$vim")")/share/vim" exec "$vim" $options "$@"
+  local fallback=
+
+  fallback="$(dirname "$(dirname "$vim")")/share/vim"
+
+  if [ -z "$options" ]
+  then
+    VIM="$fallback" exec "$vim" "$@"
+  else
+    VIM="$fallback" exec "$vim" "$options" "$@"
+  fi
 }
 __main "$@"
 
