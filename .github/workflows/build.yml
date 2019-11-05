@@ -44,6 +44,8 @@ jobs:
     name: build Vim for macOS
     runs-on: macOS-latest
     env:
+      CC: clang
+      CXX: clang++
       configurations: >
         --enable-fail-if-missing
         --disable-smack
@@ -82,6 +84,8 @@ jobs:
           python@2
           python@3
           || true
+      - run: echo "::set-env name=gettext::${prefix}/share/gettext"
+      - run: echo "::add-path::${gettext}/bin"
       - run: >
           git config --global user.name sasaplus1 &&
           git config --global user.email '<>'
@@ -99,7 +103,7 @@ jobs:
       - run: >
           cd ./gettext-* &&
           ./configure
-          --prefix=${prefix}/share/gettext
+          --prefix=${gettext}
           --disable-silent-rules
           --disable-dependency-tracking
           --disable-java
@@ -111,7 +115,7 @@ jobs:
           --without-xz
       - run: make -C ./gettext-* -j $(getconf _NPROCESSORS_ONLN)
       - run: make -C ./gettext-* install
-      - run: rm -rf ${prefix}/share/gettext/share/doc
+      - run: rm -rf "${gettext}/share/doc"
       - run: >
           cd ./vim-kaoriya/vim &&
           git checkout -b v$(printf -- 'all:\n\t@printf -- $(VIM_VER)' | make -f ../VERSION -f -) &&
@@ -126,8 +130,8 @@ jobs:
       - run: make -C ./vim-kaoriya/vim/src autoconf
       - run: >
           export LUA_PREFIX="$(brew --prefix)" &&
-          export CFLAGS="-I${prefix}/share/gettext/include" &&
-          export LDFLAGS="-L${prefix}/share/gettext/lib" &&
+          export CFLAGS="-I${gettext}/include" &&
+          export LDFLAGS="-L${gettext}/lib" &&
           cd ./vim-kaoriya/vim &&
           eval "./configure --prefix=${prefix} ${configurations}" &&
           make -j $(getconf _NPROCESSORS_ONLN) DATADIR=${datadir} &&
