@@ -44,6 +44,8 @@ jobs:
     name: build Vim for macOS
     runs-on: macOS-latest
     env:
+      CC: clang
+      CXX: clang++
       configurations: >
         --enable-fail-if-missing
         --disable-smack
@@ -82,8 +84,6 @@ jobs:
           python@2
           python@3
           || true
-      - run: echo "::set-env name=CC::clang"
-      - run: echo "::set-env name=CXX::clang++"
       - run: echo "::set-env name=gettext::${prefix}/share/gettext"
       - run: echo "::add-path::${gettext}/bin"
       - run: >
