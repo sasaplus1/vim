@@ -7,4 +7,5 @@ docker run \
   -v "$(pwd):/root" \
   -v /var/run/docker.sock:/var/run/docker.sock \
   -w /root \
+  alpine:3.10
   apk --update add --no-cache docker-compose && docker-compose build
