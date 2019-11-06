@@ -1,4 +1,4 @@
-version: '3.4'
+version: '3.7'
 
 x-configurations: &configurations >
   --enable-fail-if-missing
@@ -39,6 +39,7 @@ services:
           python3 python3-dev
       context: .
     image: sasaplus1/vim:alpine
+    init: true
   ubuntu:
     build:
       args:
@@ -61,3 +62,4 @@ services:
           python3 python3-dev
       context: .
     image: sasaplus1/vim:ubuntu
+    init: true
