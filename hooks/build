@@ -3,9 +3,10 @@
 set -euo pipefail
 
 docker run \
+  --init \
   --rm \
   -v "$(pwd):/root" \
   -v /var/run/docker.sock:/var/run/docker.sock \
   -w /root \
-  alpine:3.10
-  apk --update add --no-cache docker-compose && docker-compose build
+  alpine:3.10 \
+  apk add --update-cache --no-cache docker-compose && docker-compose build
