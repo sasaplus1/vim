@@ -43,7 +43,7 @@ add the below to `~/.bashrc`:
 alias vim='/path/to/vim/bin/pvim'
 ```
 
-## run Docker container
+## Run Docker container
 
 ### Ubuntu
 
