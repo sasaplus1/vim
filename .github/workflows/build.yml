@@ -222,54 +222,73 @@ jobs:
         with:
           name: vim-macos-sha256sum.txt
           path: .
+      - id: shasum_check
+        run: |
+          curl -fsSL https://github.com/sasaplus1/vim/releases/latest/download/vim-linux-sha256sum.txt -o vim-linux-sha256sum-latest.txt
+          curl -fsSL https://github.com/sasaplus1/vim/releases/latest/download/vim-macos-sha256sum.txt -o vim-macos-sha256sum-latest.txt
+          if sha256sum --check vim-linux-sha256sum-latest.txt --check vim-macos-sha256sum-latest.txt
+          then
+            echo '::set-output name=diff::false'
+          else
+            echo '::set-output name=diff::true'
+          fi
       - id: create_release
         uses: actions/create-release@v1.0.0
+        if: steps.shasum_check.outputs.diff
         with:
           tag_name: release-${{ github.sha }}
           release_name: ${{ github.sha }}
       - uses: actions/upload-release-asset@v1.0.1
+        if: steps.shasum_check.outputs.diff
         with:
           upload_url: ${{ steps.create_release.outputs.upload_url }}
           asset_path: vim-linux.tar.gz
           asset_name: vim-linux.tar.gz
           asset_content_type: application/gzip
       - uses: actions/upload-release-asset@v1.0.1
+        if: steps.shasum_check.outputs.diff
         with:
           upload_url: ${{ steps.create_release.outputs.upload_url }}
           asset_path: vim-linux.tar.xz
           asset_name: vim-linux.tar.xz
           asset_content_type: application/x-xz
       - uses: actions/upload-release-asset@v1.0.1
+        if: steps.shasum_check.outputs.diff
         with:
           upload_url: ${{ steps.create_release.outputs.upload_url }}
           asset_path: vim-linux.zip
           asset_name: vim-linux.zip
           asset_content_type: application/zip
       - uses: actions/upload-release-asset@v1.0.1
+        if: steps.shasum_check.outputs.diff
         with:
           upload_url: ${{ steps.create_release.outputs.upload_url }}
           asset_path: vim-linux-sha256sum.txt
           asset_name: vim-linux-sha256sum.txt
           asset_content_type: text/plain
       - uses: actions/upload-release-asset@v1.0.1
+        if: steps.shasum_check.outputs.diff
         with:
           upload_url: ${{ steps.create_release.outputs.upload_url }}
           asset_path: vim-macos.tar.gz
           asset_name: vim-macos.tar.gz
           asset_content_type: application/gzip
       - uses: actions/upload-release-asset@v1.0.1
+        if: steps.shasum_check.outputs.diff
         with:
           upload_url: ${{ steps.create_release.outputs.upload_url }}
           asset_path: vim-macos.tar.xz
           asset_name: vim-macos.tar.xz
           asset_content_type: application/x-xz
       - uses: actions/upload-release-asset@v1.0.1
+        if: steps.shasum_check.outputs.diff
         with:
           upload_url: ${{ steps.create_release.outputs.upload_url }}
           asset_path: vim-macos.zip
           asset_name: vim-macos.zip
           asset_content_type: application/zip
       - uses: actions/upload-release-asset@v1.0.1
+        if: steps.shasum_check.outputs.diff
         with:
           upload_url: ${{ steps.create_release.outputs.upload_url }}
           asset_path: vim-macos-sha256sum.txt
