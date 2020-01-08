@@ -10,6 +10,6 @@ all: ## output targets
 	@grep -E '^[a-zA-Z_-]+:.*?## .*$$' $(makefile) | awk 'BEGIN { FS = ":.*?## " }; { printf "\033[36m%-30s\033[0m %s\n", $$1, $$2 }'
 
 .PHONY: lint
-lint: targets := ./pvim ./hooks/build ./hooks/post_push
+lint: targets := ./pvim
 lint: ## lint shell script with shellcheck
 	docker run --rm -v "$$(pwd):/mnt" koalaman/shellcheck:stable $(targets)

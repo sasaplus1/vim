@@ -2,7 +2,6 @@
 
 [![build](https://github.com/sasaplus1/vim/workflows/build/badge.svg)](https://github.com/sasaplus1/vim/actions?query=workflow%3Abuild)
 [![test](https://github.com/sasaplus1/vim/workflows/test/badge.svg)](https://github.com/sasaplus1/vim/actions?query=workflow%3Atest)
-[![Docker Cloud Build Status](https://img.shields.io/docker/cloud/build/sasaplus1/vim.svg)](https://hub.docker.com/r/sasaplus1/vim)
 [![renovate](https://badges.renovateapi.com/github/sasaplus1/vim)](https://renovatebot.com)
 
 my KaoriYa Vim
