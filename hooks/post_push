@@ -1,6 +1,0 @@
-#!/bin/bash
-
-set -euo pipefail
-
-docker push sasaplus1/vim:alpine
-docker push sasaplus1/vim:ubuntu
