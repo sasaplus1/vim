@@ -227,7 +227,7 @@ jobs:
           curl -fsSL https://github.com/sasaplus1/vim/releases/latest/download/vim-linux-sha256sum.txt -o vim-linux-sha256sum-latest.txt
           curl -fsSL https://github.com/sasaplus1/vim/releases/latest/download/vim-macos-sha256sum.txt -o vim-macos-sha256sum-latest.txt
           curl -sSL  https://github.com/sasaplus1/vim/releases/latest/download/VERSION -o VERSION-latest
-          printf -- 'all:\n\t@echo $(VIM_VER)' | make -f vim-kaoriya/VERSION -f - > VERSION
+          printf -- '%b' 'all:\n\t@echo $(VIM_VER)' | make -f vim-kaoriya/VERSION -f - > VERSION
           export VERSION="$(cat VERSION | tr -d '\n')"
           echo "::set-output name=version::$VERSION"
           if [ "$VERSION" != "$(cat VERSION-latest)" ]
