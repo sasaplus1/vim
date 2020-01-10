@@ -231,15 +231,14 @@ jobs:
         with:
           name: VERSION
           path: .
-      - id: shasum_check
+      - id: version_check
         run: |
           curl -fsSL https://github.com/sasaplus1/vim/releases/latest/download/vim-linux-sha256sum.txt -o vim-linux-sha256sum-latest.txt
           curl -fsSL https://github.com/sasaplus1/vim/releases/latest/download/vim-macos-sha256sum.txt -o vim-macos-sha256sum-latest.txt
           curl -sSL  https://github.com/sasaplus1/vim/releases/latest/download/VERSION -o VERSION-latest
-          printf -- '%b' 'all:\n\t@echo $(VIM_VER)' | make -f VERSION -f - > VERSION
-          export VERSION="$(cat VERSION | tr -d '\n')"
-          echo "::set-output name=version::$VERSION"
-          if [ "$VERSION" != "$(cat VERSION-latest)" ]
+          printf -- '%b' 'all:\n\t@echo $(VIM_VER)' | make -f VERSION -f - > VERSION-current
+          echo "::set-output name=version::$(cat VERSION-current)"
+          if [ "$(cat VERSION-current)" != "$(cat VERSION-latest)" ]
           then
             echo '::set-output name=diff::true'
           else
@@ -247,70 +246,70 @@ jobs:
           fi
       - id: create_release
         uses: actions/create-release@v1.0.0
-        if: steps.shasum_check.outputs.diff
+        if: steps.version_check.outputs.diff
         with:
           tag_name: release-${{ github.sha }}
           release_name: ${{ github.sha }}
           body: |
-            Vim version ${{ steps.shasum_check.outputs.version }} +kaoriya
+            Vim version ${{ steps.version_check.outputs.version }} +kaoriya
       - uses: actions/upload-release-asset@v1.0.1
-        if: steps.shasum_check.outputs.diff
+        if: steps.version_check.outputs.diff
         with:
           upload_url: ${{ steps.create_release.outputs.upload_url }}
           asset_path: vim-linux.tar.gz
           asset_name: vim-linux.tar.gz
           asset_content_type: application/gzip
       - uses: actions/upload-release-asset@v1.0.1
-        if: steps.shasum_check.outputs.diff
+        if: steps.version_check.outputs.diff
         with:
           upload_url: ${{ steps.create_release.outputs.upload_url }}
           asset_path: vim-linux.tar.xz
           asset_name: vim-linux.tar.xz
           asset_content_type: application/x-xz
       - uses: actions/upload-release-asset@v1.0.1
-        if: steps.shasum_check.outputs.diff
+        if: steps.version_check.outputs.diff
         with:
           upload_url: ${{ steps.create_release.outputs.upload_url }}
           asset_path: vim-linux.zip
           asset_name: vim-linux.zip
           asset_content_type: application/zip
       - uses: actions/upload-release-asset@v1.0.1
-        if: steps.shasum_check.outputs.diff
+        if: steps.version_check.outputs.diff
         with:
           upload_url: ${{ steps.create_release.outputs.upload_url }}
           asset_path: vim-linux-sha256sum.txt
           asset_name: vim-linux-sha256sum.txt
           asset_content_type: text/plain
       - uses: actions/upload-release-asset@v1.0.1
-        if: steps.shasum_check.outputs.diff
+        if: steps.version_check.outputs.diff
         with:
           upload_url: ${{ steps.create_release.outputs.upload_url }}
           asset_path: vim-macos.tar.gz
           asset_name: vim-macos.tar.gz
           asset_content_type: application/gzip
       - uses: actions/upload-release-asset@v1.0.1
-        if: steps.shasum_check.outputs.diff
+        if: steps.version_check.outputs.diff
         with:
           upload_url: ${{ steps.create_release.outputs.upload_url }}
           asset_path: vim-macos.tar.xz
           asset_name: vim-macos.tar.xz
           asset_content_type: application/x-xz
       - uses: actions/upload-release-asset@v1.0.1
-        if: steps.shasum_check.outputs.diff
+        if: steps.version_check.outputs.diff
         with:
           upload_url: ${{ steps.create_release.outputs.upload_url }}
           asset_path: vim-macos.zip
           asset_name: vim-macos.zip
           asset_content_type: application/zip
       - uses: actions/upload-release-asset@v1.0.1
-        if: steps.shasum_check.outputs.diff
+        if: steps.version_check.outputs.diff
         with:
           upload_url: ${{ steps.create_release.outputs.upload_url }}
           asset_path: vim-macos-sha256sum.txt
           asset_name: vim-macos-sha256sum.txt
           asset_content_type: text/plain
       - uses: actions/upload-release-asset@v1.0.1
-        if: steps.shasum_check.outputs.diff
+        if: steps.version_check.outputs.diff
         with:
           upload_url: ${{ steps.create_release.outputs.upload_url }}
           asset_path: VERSION
