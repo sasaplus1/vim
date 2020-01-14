@@ -120,12 +120,12 @@ jobs:
       - run: rm -rf "${gettext}/share/doc"
       - run: >
           cd ./vim-kaoriya/vim &&
-          git checkout -b v$(printf -- 'all:\n\t@printf -- $(VIM_VER)' | make -f ../VERSION -f -) &&
+          git checkout -b v$(printf -- '%b' 'all:\n\t@printf -- $(VIM_VER)' | make -f ../VERSION -f -) &&
           git config --local guilt.patchesdir ../patches &&
           guilt init
       - run: >
           cd ./vim-kaoriya &&
-          cp ./patches/master/* ./patches/v$(printf -- 'all:\n\t@printf -- $(VIM_VER)' | make -f ./VERSION -f -)
+          cp ./patches/master/* ./patches/v$(printf -- '%b' 'all:\n\t@printf -- $(VIM_VER)' | make -f ./VERSION -f -)
       - run: >
           cd ./vim-kaoriya/vim/src &&
           guilt push --all

@@ -27,11 +27,11 @@ RUN cd ./guilt && \
 ENV PATH /opt/guilt/bin:${PATH}
 
 RUN cd ./vim-kaoriya/vim && \
-  git checkout -b v$(printf -- 'all:\n\t@printf -- $(VIM_VER)' | make -f ../VERSION -f -) && \
+  git checkout -b v$(printf -- '%b' 'all:\n\t@printf -- $(VIM_VER)' | make -f ../VERSION -f -) && \
   git config --local guilt.patchesdir ../patches && \
   guilt init
 RUN cd ./vim-kaoriya && \
-  cp ./patches/master/* ./patches/v$(printf -- 'all:\n\t@printf -- $(VIM_VER)' | make -f ./VERSION -f -)
+  cp ./patches/master/* ./patches/v$(printf -- '%b' 'all:\n\t@printf -- $(VIM_VER)' | make -f ./VERSION -f -)
 RUN cd ./vim-kaoriya/vim/src && \
   guilt push --all && \
   make autoconf
