@@ -233,8 +233,6 @@ jobs:
           path: .
       - id: version_check
         run: |
-          curl -fsSL https://github.com/sasaplus1/vim/releases/latest/download/vim-linux-sha256sum.txt -o vim-linux-sha256sum-latest.txt
-          curl -fsSL https://github.com/sasaplus1/vim/releases/latest/download/vim-macos-sha256sum.txt -o vim-macos-sha256sum-latest.txt
           curl -sSL  https://github.com/sasaplus1/vim/releases/latest/download/VERSION -o VERSION-latest
           printf -- '%b' 'all:\n\t@echo $(VIM_VER)' | make -f VERSION -f - > VERSION-current
           echo "::set-output name=version::$(cat VERSION-current)"
