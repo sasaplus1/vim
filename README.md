@@ -9,31 +9,7 @@ my KaoriYa Vim
 
 ## Install
 
-### macOS
-
-```console
-$ curl -LO https://github.com/sasaplus1/vim/releases/latest/download/vim-macos.tar.xz
-$ tar xvf vim-macos.tar.xz
-```
-
-or
-
-```console
-$ curl -L https://github.com/sasaplus1/vim/releases/latest/download/vim-macos.tar.xz | tar xf -
-```
-
-### Linux
-
-```console
-$ curl -LO https://github.com/sasaplus1/vim/releases/latest/download/vim-linux.tar.xz
-$ tar xvf vim-linux.tar.xz
-```
-
-or
-
-```console
-$ curl -L https://github.com/sasaplus1/vim/releases/latest/download/vim-linux.tar.xz | tar xf -
-```
+see [latest release](https://github.com/sasaplus1/vim/releases/latest).
 
 ## Setup
 
@@ -41,6 +17,12 @@ add the below to `~/.bashrc`:
 
 ```sh
 alias vim='/path/to/vim/bin/pvim'
+```
+
+and execute vim:
+
+```console
+$ vim
 ```
 
 ## Run Docker container
