@@ -204,6 +204,10 @@ jobs:
     env:
       GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
     steps:
+      - id: get_macos_version
+        run: |
+          echo "::set-output name=version::$(sw_vers -productVersion)"
+          echo "::set-env name=version::$(sw_vers -productVersion)"
       - uses: actions/download-artifact@master
         with:
           name: vim-linux.tar.gz
