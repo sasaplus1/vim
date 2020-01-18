@@ -34,6 +34,7 @@ env:
     - prefix=/var/tmp/vim
     - gettext=${prefix}/share/gettext
     - PATH=${gettext}/bin:${PATH}
+    - version=$(sw_vers -productVersion)
 
 before_script:
   - export options=()
@@ -143,16 +144,16 @@ after_success:
   - otool -L "${prefix}/bin/vim"
 
 before_deploy:
-  - cp ./vim-kaoriya/VERSION ./VERSION
-  - curl -sSL https://github.com/sasaplus1/vim/releases/latest/download/VERSION -o VERSION-latest
-  - export current="$(printf -- '%b' 'all:\n\t@echo $(VIM_VER)' | make -f VERSION -f - 2>/dev/null || echo unknown)"
-  - export latest="$(printf -- '%b' 'all:\n\t@echo $(VIM_VER)' | make -f VERSION-latest -f - 2>/dev/null || echo unknown)"
-  - test "$current" != "$latest" || travis_terminate 0
   - mv "${prefix}" ./$(basename "${prefix}")-macos
-  - tar cfz vim-macos-"$(sw_vers -productVersion)".tar.gz ./vim-macos
-  - tar cfJ vim-macos-"$(sw_vers -productVersion)".tar.xz ./vim-macos
-  - zip -qr vim-macos-"$(sw_vers -productVersion)".zip ./vim-macos
-  - sha256sum vim-macos-*.* > vim-macos-"$(sw_vers -productVersion)"-sha256sum.txt
+  - tar cfz "vim-macos-${version}.tar.gz" ./vim-macos
+  - tar cfJ "vim-macos-${version}.tar.xz" ./vim-macos
+  - zip -qr "vim-macos-${version}.zip" ./vim-macos
+  - >-
+    sha256sum
+    "vim-macos-${version}.tar.gz"
+    "vim-macos-${version}.tar.xz"
+    "vim-macos-${version}.zip"
+    > "vim-macos-${version}-sha256sum.txt"
   - export TRAVIS_TAG="release-${TRAVIS_COMMIT}"
   - git tag "${TRAVIS_TAG}"
 
