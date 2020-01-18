@@ -88,6 +88,10 @@ jobs:
           || true
       - run: echo "::set-env name=gettext::${prefix}/share/gettext"
       - run: echo "::add-path::${gettext}/bin"
+      - id: get_macos_version
+        run: |
+          echo "::set-output name=version::$(sw_vers -productVersion)"
+          echo "::set-env name=version::$(sw_vers -productVersion)"
       - run: >
           git config --global user.name sasaplus1 &&
           git config --global user.email '<>'
@@ -161,27 +165,32 @@ jobs:
           "${prefix}/bin/pvim" --version
       - run: otool -L "${prefix}/bin/vim"
       - run: mv "${prefix}" ./$(basename "${prefix}")-macos
-      - run: tar cfz vim-macos.tar.gz ./vim-macos
-      - run: tar cfJ vim-macos.tar.xz ./vim-macos
-      - run: zip -qr vim-macos.zip ./vim-macos
-      - run: sha256sum vim-macos.* > vim-macos-sha256sum.txt
+      - run: tar cfz "vim-macos-${version}.tar.gz" ./vim-macos
+      - run: tar cfJ "vim-macos-${version}.tar.xz" ./vim-macos
+      - run: zip -qr "vim-macos-${version}.zip" ./vim-macos
+      - run: >-
+          sha256sum
+          "vim-macos-${version}.tar.gz"
+          "vim-macos-${version}.tar.xz"
+          "vim-macos-${version}.zip"
+          > "vim-macos-${version}-sha256sum.txt"
       - run: cp ./vim-kaoriya/VERSION .
       - uses: actions/upload-artifact@master
         with:
-          name: vim-macos.tar.gz
-          path: vim-macos.tar.gz
+          name: vim-macos-${{ steps.get_macos_version.outputs.version }}.tar.gz
+          path: vim-macos-${{ steps.get_macos_version.outputs.version }}.tar.gz
       - uses: actions/upload-artifact@master
         with:
-          name: vim-macos.tar.xz
-          path: vim-macos.tar.xz
+          name: vim-macos-${{ steps.get_macos_version.outputs.version }}.tar.xz
+          path: vim-macos-${{ steps.get_macos_version.outputs.version }}.tar.xz
       - uses: actions/upload-artifact@master
         with:
-          name: vim-macos.zip
-          path: vim-macos.zip
+          name: vim-macos-${{ steps.get_macos_version.outputs.version }}.zip
+          path: vim-macos-${{ steps.get_macos_version.outputs.version }}.zip
       - uses: actions/upload-artifact@master
         with:
-          name: vim-macos-sha256sum.txt
-          path: vim-macos-sha256sum.txt
+          name: vim-macos-${{ steps.get_macos_version.outputs.version }}-sha256sum.txt
+          path: vim-macos-${{ steps.get_macos_version.outputs.version }}-sha256sum.txt
       - uses: actions/upload-artifact@master
         with:
           name: VERSION
@@ -213,19 +222,19 @@ jobs:
           path: .
       - uses: actions/download-artifact@master
         with:
-          name: vim-macos.tar.gz
+          name: vim-macos-${{ steps.get_macos_version.outputs.version }}.tar.gz
           path: .
       - uses: actions/download-artifact@master
         with:
-          name: vim-macos.tar.xz
+          name: vim-macos-${{ steps.get_macos_version.outputs.version }}.tar.xz
           path: .
       - uses: actions/download-artifact@master
         with:
-          name: vim-macos.zip
+          name: vim-macos-${{ steps.get_macos_version.outputs.version }}.zip
           path: .
       - uses: actions/download-artifact@master
         with:
-          name: vim-macos-sha256sum.txt
+          name: vim-macos-${{ steps.get_macos_version.outputs.version }}-sha256sum.txt
           path: .
       - uses: actions/download-artifact@master
         with:
@@ -248,8 +257,6 @@ jobs:
             echo '::set-output name=not_released::false'
           fi
         env:
-          current: ${{ steps.get_current_version.outputs.version }}
-          latest: ${{ steps.get_latest_version.outputs.version }}
           url: https://github.com/${{ github.repository }}/releases/tag/release-${{ github.sha }}
       - id: create_release
         uses: actions/create-release@v1.0.0
@@ -285,24 +292,24 @@ jobs:
       - uses: actions/upload-release-asset@v1.0.1
         with:
           upload_url: ${{ steps.create_release.outputs.upload_url }}
-          asset_path: vim-macos.tar.gz
-          asset_name: vim-macos.tar.gz
+          asset_path: vim-macos-${{ steps.get_macos_version.outputs.version }}.tar.gz
+          asset_name: vim-macos-${{ steps.get_macos_version.outputs.version }}.tar.gz
           asset_content_type: application/gzip
       - uses: actions/upload-release-asset@v1.0.1
         with:
           upload_url: ${{ steps.create_release.outputs.upload_url }}
-          asset_path: vim-macos.tar.xz
-          asset_name: vim-macos.tar.xz
+          asset_path: vim-macos-${{ steps.get_macos_version.outputs.version }}.tar.xz
+          asset_name: vim-macos-${{ steps.get_macos_version.outputs.version }}.tar.xz
           asset_content_type: application/x-xz
       - uses: actions/upload-release-asset@v1.0.1
         with:
           upload_url: ${{ steps.create_release.outputs.upload_url }}
-          asset_path: vim-macos.zip
-          asset_name: vim-macos.zip
+          asset_path: vim-macos-${{ steps.get_macos_version.outputs.version }}.zip
+          asset_name: vim-macos-${{ steps.get_macos_version.outputs.version }}.zip
           asset_content_type: application/zip
       - uses: actions/upload-release-asset@v1.0.1
         with:
           upload_url: ${{ steps.create_release.outputs.upload_url }}
-          asset_path: vim-macos-sha256sum.txt
-          asset_name: vim-macos-sha256sum.txt
+          asset_path: vim-macos-${{ steps.get_macos_version.outputs.version }}-sha256sum.txt
+          asset_name: vim-macos-${{ steps.get_macos_version.outputs.version }}-sha256sum.txt
           asset_content_type: text/plain
