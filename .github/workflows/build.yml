@@ -92,6 +92,7 @@ jobs:
         run: |
           echo "::set-output name=version::$(sw_vers -productVersion)"
           echo "::set-env name=version::$(sw_vers -productVersion)"
+          printf -- '%b' "$(sw_vers -productVersion)" > VERSION-macOS
       - run: >
           git config --global user.name sasaplus1 &&
           git config --global user.email '<>'
@@ -174,7 +175,7 @@ jobs:
           "vim-macos-${version}.tar.xz"
           "vim-macos-${version}.zip"
           > "vim-macos-${version}-sha256sum.txt"
-      - run: cp ./vim-kaoriya/VERSION .
+      - run: cp ./vim-kaoriya/VERSION ./VERSION-vim
       - uses: actions/upload-artifact@master
         with:
           name: vim-macos-${{ steps.get_macos_version.outputs.version }}.tar.gz
@@ -193,8 +194,12 @@ jobs:
           path: vim-macos-${{ steps.get_macos_version.outputs.version }}-sha256sum.txt
       - uses: actions/upload-artifact@master
         with:
-          name: VERSION
-          path: VERSION
+          name: VERSION-macOS
+          path: VERSION-macOS
+      - uses: actions/upload-artifact@master
+        with:
+          name: VERSION-vim
+          path: VERSION-vim
   release:
     name: create release and upload assets
     runs-on: ubuntu-latest
@@ -204,10 +209,26 @@ jobs:
     env:
       GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
     steps:
+      - uses: actions/download-artifact@master
+        with:
+          name: VERSION-macOS
+          path: .
       - id: get_macos_version
         run: |
-          echo "::set-output name=version::$(sw_vers -productVersion)"
-          echo "::set-env name=version::$(sw_vers -productVersion)"
+          echo "::set-output name=version::$(cat VERSION-macOS)"
+          echo "::set-env name=version::$(cat VERSION-macOS)"
+      - uses: actions/download-artifact@master
+        with:
+          name: VERSION-vim
+          path: .
+      - id: get_vim_version
+        run: |
+          if [ -r 'VERSION-vim' ]
+          then
+            echo "::set-output name=version::$(printf -- '%b' 'all:\n\t@echo $(VIM_VER)' | make -f VERSION-vim -f -)"
+          else
+            echo '::set-output name=version::unknown'
+          fi
       - uses: actions/download-artifact@master
         with:
           name: vim-linux.tar.gz
@@ -240,18 +261,6 @@ jobs:
         with:
           name: vim-macos-${{ steps.get_macos_version.outputs.version }}-sha256sum.txt
           path: .
-      - uses: actions/download-artifact@master
-        with:
-          name: VERSION
-          path: .
-      - id: get_vim_version
-        run: |
-          if [ -r 'VERSION' ]
-          then
-            echo "::set-output name=version::$(printf -- '%b' 'all:\n\t@echo $(VIM_VER)' | make -f VERSION -f -)"
-          else
-            echo '::set-output name=version::unknown'
-          fi
       - id: check_released
         run: |
           if ! curl -fsSL "$url" >/dev/null 2>&1
