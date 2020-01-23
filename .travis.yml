@@ -4,6 +4,11 @@ language: c
 
 compiler: clang
 
+cache:
+  directories:
+    - $HOME/.ccache
+    - $HOME/.configure-cache
+
 git:
   depth: 1
 
@@ -18,6 +23,8 @@ addons:
   homebrew:
     packages:
       - autoconf
+      # for gettext build
+      - ccache
       - coreutils
       # for xcode8
       - git
@@ -33,7 +40,7 @@ env:
     - datadir=/use/local/share
     - prefix=/var/tmp/vim
     - gettext=${prefix}/share/gettext
-    - PATH=${gettext}/bin:${PATH}
+    - PATH=${gettext}/bin:/usr/local/opt/ccache/libexec:${PATH}
     - version=$(sw_vers -productVersion)
 
 before_script:
@@ -59,6 +66,7 @@ before_script:
   - options+=(--without-x)
   - options+=(--with-tlib=ncurses)
   - export configurations=${options[@]}
+  - mkdir -p $HOME/.configure-cache
 
 script:
   - >
@@ -79,6 +87,7 @@ script:
   - >
       cd ./gettext-* &&
       ./configure
+      --cache-file=$HOME/.configure-cache/config.cache
       --prefix=${gettext}
       --disable-silent-rules
       --disable-dependency-tracking
@@ -90,7 +99,7 @@ script:
       --without-bzip2
       --without-xz &&
       cd -
-  - make -C ./gettext-* -j $(getconf _NPROCESSORS_ONLN)
+  - make -C ./gettext-* -j $(getconf _NPROCESSORS_ONLN) CC="ccache $CC" CXX="ccache $CXX"
   - make -C ./gettext-* install
   - rm -rf "${gettext}/share/doc"
   - >
