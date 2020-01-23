@@ -8,6 +8,7 @@ cache:
   directories:
     - $HOME/.ccache
     - $HOME/.configure-cache
+    - $HOME/Library/Caches/Homebrew
 
 git:
   depth: 1
@@ -150,6 +151,9 @@ script:
       "$(otool -L ${prefix}/bin/vim | awk '/libintl/ { print $1 }')"
       '@executable_path/../share/gettext/lib/libintl.dylib'
       "${prefix}/bin/vim"
+
+before_cache:
+  - brew cleanup
 
 after_success:
   - >
