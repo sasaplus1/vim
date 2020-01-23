@@ -4,39 +4,95 @@ language: c
 
 compiler: clang
 
-cache:
-  directories:
-    - $HOME/.ccache
-    - $HOME/.configure-cache
-    - $HOME/Library/Caches/Homebrew
-
 git:
   depth: 1
 
 jobs:
   include:
     - osx_image: xcode8
+      before_install:
+        - curl -fsSLO https://raw.githubusercontent.com/GiovanniBussi/macports-ci/master/macports-ci
+        - source ./macports-ci install
+        - source macports-ci ccache
+        - sudo port install -N autoconf
+        - sudo port install -N ccache
+        - sudo port install -N coreutils
+        - sudo port install -N dash
+        - sudo port install -N git
+        - sudo port install -N gsed
+        - sudo port install -N lua51
+        - sudo port install -N luajit
+        - sudo port install -N python27
+        - sudo port install -N python38
+        - source macports-ci ccache --save
+      cache:
+        directories:
+          - $HOME/.ccache
+          - $HOME/.configure-cache
+          - $HOME/.macports-ci-ccache
     - osx_image: xcode9.2
+      before_install:
+        - curl -fsSLO https://raw.githubusercontent.com/GiovanniBussi/macports-ci/master/macports-ci
+        - source ./macports-ci install
+        - source macports-ci ccache
+        - sudo port install -N autoconf
+        - sudo port install -N ccache
+        - sudo port install -N coreutils
+        - sudo port install -N dash
+        - sudo port install -N git
+        - sudo port install -N gsed
+        - sudo port install -N lua51
+        - sudo port install -N luajit
+        - sudo port install -N python27
+        - sudo port install -N python38
+        - source macports-ci ccache --save
+      cache:
+        directories:
+          - $HOME/.ccache
+          - $HOME/.configure-cache
+          - $HOME/.macports-ci-ccache
     - osx_image: xcode10.1
+      addons:
+        homebrew:
+          packages:
+            - autoconf
+            # for gettext build
+            - ccache
+            - coreutils
+            # for gettext build
+            - dash
+            - gnu-sed
+            - lua@5.1
+            - luajit
+            - python@2
+            - python@3
+          update: true
+      cache:
+        directories:
+          - $HOME/.ccache
+          - $HOME/.configure-cache
+          - $HOME/Library/Caches/Homebrew
     - osx_image: xcode11.3
-
-addons:
-  homebrew:
-    packages:
-      - autoconf
-      # for gettext build
-      - ccache
-      - coreutils
-      # for gettext build
-      - dash
-      # for xcode8
-      - git
-      - gnu-sed
-      - lua@5.1
-      - luajit
-      - python@2
-      - python@3
-    update: true
+      addons:
+        homebrew:
+          packages:
+            - autoconf
+            # for gettext build
+            - ccache
+            - coreutils
+            # for gettext build
+            - dash
+            - gnu-sed
+            - lua@5.1
+            - luajit
+            - python@2
+            - python@3
+          update: true
+      cache:
+        directories:
+          - $HOME/.ccache
+          - $HOME/.configure-cache
+          - $HOME/Library/Caches/Homebrew
 
 env:
   global:
