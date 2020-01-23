@@ -26,6 +26,8 @@ addons:
       # for gettext build
       - ccache
       - coreutils
+      # for gettext build
+      - dash
       # for xcode8
       - git
       - gnu-sed
@@ -86,6 +88,7 @@ script:
   - rm ./gettext-*.tar.xz
   - >
       cd ./gettext-* &&
+      export shell="$SHELL" SHELL="$(brew --prefix dash)/bin/dash" &&
       ./configure
       --cache-file=$HOME/.configure-cache/config.cache
       --prefix=${gettext}
@@ -98,6 +101,7 @@ script:
       --without-git
       --without-bzip2
       --without-xz &&
+      export SHELL="$shell" &&
       cd -
   - make -C ./gettext-* -j $(getconf _NPROCESSORS_ONLN) CC="ccache $CC" CXX="ccache $CXX"
   - make -C ./gettext-* install
