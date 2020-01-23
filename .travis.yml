@@ -68,7 +68,7 @@ before_script:
   - options+=(--with-luajit)
   - options+=(--without-x)
   - options+=(--with-tlib=ncurses)
-  - export configurations=${options[@]}
+  - export configurations=${options[*]}
   - mkdir -p $HOME/.configure-cache
 
 script:
