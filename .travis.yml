@@ -17,7 +17,6 @@ jobs:
         - yes | sudo port install -N autoconf
         - yes | sudo port install -N ccache
         - yes | sudo port install -N coreutils
-        - yes | sudo port install -N dash
         - yes | sudo port install -N git
         - yes | sudo port install -N gsed
         - yes | sudo port install -N lua51
@@ -30,6 +29,9 @@ jobs:
           - $HOME/.ccache
           - $HOME/.configure-cache
           - $HOME/.macports-ci-ccache
+      env:
+        global:
+          - LUA_PREFIX=/opt/local
     - osx_image: xcode9.2
       before_install:
         - curl -fsSLO https://raw.githubusercontent.com/GiovanniBussi/macports-ci/master/macports-ci
@@ -38,7 +40,6 @@ jobs:
         - yes | sudo port install -N autoconf
         - yes | sudo port install -N ccache
         - yes | sudo port install -N coreutils
-        - yes | sudo port install -N dash
         - yes | sudo port install -N git
         - yes | sudo port install -N gsed
         - yes | sudo port install -N lua51
@@ -51,6 +52,9 @@ jobs:
           - $HOME/.ccache
           - $HOME/.configure-cache
           - $HOME/.macports-ci-ccache
+      env:
+        global:
+          - LUA_PREFIX=/opt/local
     - osx_image: xcode10.1
       addons:
         homebrew:
@@ -59,8 +63,6 @@ jobs:
             # for gettext build
             - ccache
             - coreutils
-            # for gettext build
-            - dash
             - gnu-sed
             - lua@5.1
             - luajit
@@ -72,6 +74,9 @@ jobs:
           - $HOME/.ccache
           - $HOME/.configure-cache
           - $HOME/Library/Caches/Homebrew
+      env:
+        global:
+          - LUA_PREFIX=$(brew --prefix)
     - osx_image: xcode11.3
       addons:
         homebrew:
@@ -80,8 +85,6 @@ jobs:
             # for gettext build
             - ccache
             - coreutils
-            # for gettext build
-            - dash
             - gnu-sed
             - lua@5.1
             - luajit
@@ -93,6 +96,9 @@ jobs:
           - $HOME/.ccache
           - $HOME/.configure-cache
           - $HOME/Library/Caches/Homebrew
+      env:
+        global:
+          - LUA_PREFIX=$(brew --prefix)
 
 env:
   global:
@@ -145,7 +151,6 @@ script:
   - rm ./gettext-*.tar.xz
   - >
       cd ./gettext-* &&
-      export shell="$SHELL" SHELL="$(brew --prefix dash)/bin/dash" &&
       ./configure
       --cache-file=$HOME/.configure-cache/config.cache
       --prefix=${gettext}
@@ -179,7 +184,6 @@ script:
       cd -
   - make -C ./vim-kaoriya/vim/src autoconf
   - >
-      export LUA_PREFIX="$(brew --prefix)" &&
       export CFLAGS="-I${gettext}/include" &&
       export LDFLAGS="-L${gettext}/lib" &&
       cd ./vim-kaoriya/vim &&
@@ -209,7 +213,7 @@ script:
       "${prefix}/bin/vim"
 
 before_cache:
-  - brew cleanup
+  - type brew && brew cleanup
 
 after_success:
   - >
