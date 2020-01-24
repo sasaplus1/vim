@@ -30,8 +30,7 @@ jobs:
           - $HOME/.configure-cache
           - $HOME/.macports-ci-ccache
       env:
-        global:
-          - LUA_PREFIX=/opt/local
+        - LUA_PREFIX=/opt/local
     - osx_image: xcode9.2
       before_install:
         - curl -fsSLO https://raw.githubusercontent.com/GiovanniBussi/macports-ci/master/macports-ci
@@ -53,8 +52,7 @@ jobs:
           - $HOME/.configure-cache
           - $HOME/.macports-ci-ccache
       env:
-        global:
-          - LUA_PREFIX=/opt/local
+        - LUA_PREFIX=/opt/local
     - osx_image: xcode10.1
       addons:
         homebrew:
@@ -75,8 +73,7 @@ jobs:
           - $HOME/.configure-cache
           - $HOME/Library/Caches/Homebrew
       env:
-        global:
-          - LUA_PREFIX=$(brew --prefix)
+        - LUA_PREFIX=$(brew --prefix)
     - osx_image: xcode11.3
       addons:
         homebrew:
@@ -97,8 +94,7 @@ jobs:
           - $HOME/.configure-cache
           - $HOME/Library/Caches/Homebrew
       env:
-        global:
-          - LUA_PREFIX=$(brew --prefix)
+        - LUA_PREFIX=$(brew --prefix)
 
 env:
   global:
