@@ -17,7 +17,6 @@ jobs:
         - yes | sudo port install -N autoconf
         - yes | sudo port install -N ccache
         - yes | sudo port install -N coreutils
-        - yes | sudo port install -N git
         - yes | sudo port install -N gsed
         - yes | sudo port install -N lua51
         - yes | sudo port install -N luajit
@@ -29,8 +28,6 @@ jobs:
           - $HOME/.ccache
           - $HOME/.configure-cache
           - $HOME/.macports-ci-ccache
-      env:
-        - LUA_PREFIX=/opt/local
     - osx_image: xcode9.2
       before_install:
         - curl -fsSLO https://raw.githubusercontent.com/GiovanniBussi/macports-ci/master/macports-ci
@@ -39,7 +36,6 @@ jobs:
         - yes | sudo port install -N autoconf
         - yes | sudo port install -N ccache
         - yes | sudo port install -N coreutils
-        - yes | sudo port install -N git
         - yes | sudo port install -N gsed
         - yes | sudo port install -N lua51
         - yes | sudo port install -N luajit
@@ -51,8 +47,6 @@ jobs:
           - $HOME/.ccache
           - $HOME/.configure-cache
           - $HOME/.macports-ci-ccache
-      env:
-        - LUA_PREFIX=/opt/local
     - osx_image: xcode10.1
       addons:
         homebrew:
@@ -72,8 +66,6 @@ jobs:
           - $HOME/.ccache
           - $HOME/.configure-cache
           - $HOME/Library/Caches/Homebrew
-      env:
-        - LUA_PREFIX=$(brew --prefix)
     - osx_image: xcode11.3
       addons:
         homebrew:
@@ -93,18 +85,20 @@ jobs:
           - $HOME/.ccache
           - $HOME/.configure-cache
           - $HOME/Library/Caches/Homebrew
-      env:
-        - LUA_PREFIX=$(brew --prefix)
 
 env:
   global:
+    - version=$(sw_vers -productVersion)
     - datadir=/use/local/share
     - prefix=/var/tmp/vim
     - gettext=${prefix}/share/gettext
     - PATH=${gettext}/bin:/usr/local/opt/ccache/libexec:${PATH}
-    - version=$(sw_vers -productVersion)
+    - CFLAGS="-I${gettext}/include -I/opt/local/include/lua-5.1 -I/opt/local/include/luajit-2.1"
+    - LDFLAGS="-L${gettext}/lib"
+    - LUA_PREFIX="$(brew --prefix 2>/dev/null || printf -- '%b' '/opt/local')"
 
 before_script:
+  - sw_vers
   - export options=()
   - options+=(--enable-fail-if-missing)
   - options+=(--disable-smack)
@@ -159,7 +153,6 @@ script:
       --without-git
       --without-bzip2
       --without-xz &&
-      export SHELL="$shell" &&
       cd -
   - make -C ./gettext-* -j $(getconf _NPROCESSORS_ONLN) CC="ccache $CC" CXX="ccache $CXX"
   - make -C ./gettext-* install
@@ -180,8 +173,6 @@ script:
       cd -
   - make -C ./vim-kaoriya/vim/src autoconf
   - >
-      export CFLAGS="-I${gettext}/include" &&
-      export LDFLAGS="-L${gettext}/lib" &&
       cd ./vim-kaoriya/vim &&
       eval "./configure --prefix=${prefix} ${configurations}" &&
       make -j $(getconf _NPROCESSORS_ONLN) DATADIR=${datadir} &&
