@@ -1,6 +1,6 @@
 os: osx
 
-language: c
+language: minimal
 
 compiler: clang
 
