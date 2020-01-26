@@ -18,9 +18,9 @@ addons:
   homebrew:
     packages:
       - autoconf
+      # for gettext build
+      - ccache
       - coreutils
-      # for xcode8
-      - git
       - gnu-sed
       - lua@5.1
       - luajit
@@ -28,13 +28,18 @@ addons:
       - python@3
     update: true
 
+cache:
+  directories:
+    - $HOME/.ccache
+    - $HOME/Library/Caches/Homebrew
+
 env:
   global:
     - datadir=/use/local/share
-    - prefix=/var/tmp/vim
     - gettext=${prefix}/share/gettext
-    - PATH=${gettext}/bin:${PATH}
+    - prefix=/var/tmp/vim
     - version=$(sw_vers -productVersion)
+    - PATH=${gettext}/bin:/usr/local/opt/ccache/libexec:${PATH}
 
 before_script:
   - export -f travis_nanoseconds
@@ -63,7 +68,7 @@ before_script:
   - options+=(--with-luajit)
   - options+=(--without-x)
   - options+=(--with-tlib=ncurses)
-  - export configurations=${options[@]}
+  - export configurations=${options[*]}
 
 script:
   - >
@@ -99,7 +104,7 @@ script:
       --without-xz &&
       cd -
   - travis_fold start 'make.gettext' && travis_time_start
-  - make -C ./gettext-* -j $(getconf _NPROCESSORS_ONLN)
+  - make -C ./gettext-* -j $(getconf _NPROCESSORS_ONLN) CC="ccache $CC" CXX="ccache $CXX"
   - travis_time_finish && travis_fold end 'make.gettext'
   - travis_fold start 'make.install.gettext' && travis_time_start
   - make -C ./gettext-* install
@@ -151,6 +156,9 @@ script:
       "$(otool -L ${prefix}/bin/vim | awk '/libintl/ { print $1 }')"
       '@executable_path/../share/gettext/lib/libintl.dylib'
       "${prefix}/bin/vim"
+
+before_cache:
+  - brew cleanup
 
 after_success:
   - >
