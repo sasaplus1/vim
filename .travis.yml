@@ -40,6 +40,8 @@ env:
     - gettext=${prefix}/share/gettext
     - prefix=/var/tmp/vim
     - version=$(sw_vers -productVersion)
+    - CC=clang
+    - CXX=clang++
     - PATH=${gettext}/bin:/usr/local/opt/ccache/libexec:${PATH}
 
 before_script:
