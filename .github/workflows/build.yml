@@ -96,6 +96,7 @@ jobs:
           printf -- '%b' "$(sw_vers -productVersion)" > VERSION-macOS
       - id: get_ccache_dir
         run: echo "::set-output name=path::${HOME}/.ccache"
+      - run: ccache -s
       - run: >
           git config --global user.name sasaplus1 &&
           git config --global user.email '<>'
