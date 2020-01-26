@@ -47,7 +47,6 @@ jobs:
     runs-on: macOS-latest
     env:
       CC: clang
-      CXX: clang++
       configurations: >
         --enable-fail-if-missing
         --disable-smack
@@ -76,9 +75,11 @@ jobs:
         with:
           fetch-depth: 1
       - run: brew update
+      # ccache is use for fast build
       - run: >
           brew install
           autoconf
+          ccache
           coreutils
           gnu-sed
           lua@5.1
@@ -93,6 +94,8 @@ jobs:
           echo "::set-output name=version::$(sw_vers -productVersion)"
           echo "::set-env name=version::$(sw_vers -productVersion)"
           printf -- '%b' "$(sw_vers -productVersion)" > VERSION-macOS
+      - id: get_ccache_dir
+        run: echo "::set-output name=path::${HOME}/.ccache"
       - run: >
           git config --global user.name sasaplus1 &&
           git config --global user.email '<>'
@@ -106,6 +109,12 @@ jobs:
       - run: make -C ./guilt PREFIX=/usr/local install
       - run: curl -fsSLO https://ftp.gnu.org/pub/gnu/gettext/gettext-0.20.1.tar.xz
       - run: tar fvx ./gettext-*.tar.xz
+      - uses: actions/cache@v1
+        with:
+          path: ${{ steps.get_ccache_dir.outputs.path }}
+          key: ${{ runner.os }}-ccache-${{ hashFiles('**/gettext-*/.version') }}
+          restore-keys: |
+            ${{ runner.os }}-ccache-
       - run: rm ./gettext-*.tar.xz
       - run: >
           cd ./gettext-* &&
@@ -120,7 +129,7 @@ jobs:
           --without-git
           --without-bzip2
           --without-xz
-      - run: make -C ./gettext-* -j $(getconf _NPROCESSORS_ONLN)
+      - run: make -C ./gettext-* -j $(getconf _NPROCESSORS_ONLN) CC='ccache clang'
       - run: make -C ./gettext-* install
       - run: rm -rf "${gettext}/share/doc"
       - run: >
