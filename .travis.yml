@@ -211,6 +211,8 @@ before_deploy:
     > "vim-macos-${version}-sha256sum.txt"
   - export TRAVIS_TAG="release-${TRAVIS_COMMIT}"
   - git tag "${TRAVIS_TAG}" || true
+  - >
+    [[ "$version" =~ ^10\.11 ]] && export PATH=$HOME/.rvm/gems/ruby-2.0.0-p648/bin:${PATH}
 
 deploy:
   provider: releases
