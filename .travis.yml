@@ -64,7 +64,8 @@ env:
     - prefix=/var/tmp/vim
     - gettext=${prefix}/share/gettext
     - version=$(sw_vers -productVersion)
-    - PATH=${gettext}/bin:/usr/local/opt/ccache/libexec:/opt/local/bin:/opt/local/sbin:${PATH}
+    - PATH=/opt/local/bin:/opt/local/sbin:${PATH}
+    - PATH=${gettext}/bin:/usr/local/opt/ccache/libexec:${PATH}
 
 before_script:
   - export -f travis_cmd
@@ -211,8 +212,6 @@ before_deploy:
     > "vim-macos-${version}-sha256sum.txt"
   - export TRAVIS_TAG="release-${TRAVIS_COMMIT}"
   - git tag "${TRAVIS_TAG}" || true
-  - >
-    [[ "$version" =~ ^10\.11 ]] && export PATH=$HOME/.rvm/gems/ruby-2.0.0-p648/bin:${PATH}
 
 deploy:
   provider: releases
