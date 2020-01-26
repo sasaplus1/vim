@@ -85,12 +85,16 @@ script:
   - gsed -i.bak -r -e 's|\<readlink\>|greadlink|g' ./guilt/guilt
   - make -C ./guilt PREFIX=/usr/local install
   - curl -fsSLO https://ftp.gnu.org/pub/gnu/gettext/gettext-0.20.1.tar.xz
-  - travis_fold start 'tar.gettext' && travis_time_start
-  - tar fvx ./gettext-*.tar.xz
-  - travis_time_finish && travis_fold end 'tar.gettext'
-  - rm ./gettext-*.tar.xz
-  - travis_fold start 'configure.gettext' && travis_time_start
   - >
+      travis_fold start 'tar.gettext' &&
+      travis_time_start &&
+      tar fvx ./gettext-*.tar.xz &&
+      travis_time_finish &&
+      travis_fold end 'tar.gettext'
+  - rm ./gettext-*.tar.xz
+  - >
+      travis_fold start 'configure.gettext' &&
+      travis_time_start &&
       cd ./gettext-* &&
       ./configure
       --prefix=${gettext}
@@ -103,13 +107,21 @@ script:
       --without-git
       --without-bzip2
       --without-xz &&
-      cd -
-  - travis_fold start 'make.gettext' && travis_time_start
-  - make -C ./gettext-* -j $(getconf _NPROCESSORS_ONLN) CC="ccache $CC" CXX="ccache $CXX"
-  - travis_time_finish && travis_fold end 'make.gettext'
-  - travis_fold start 'make.install.gettext' && travis_time_start
-  - make -C ./gettext-* install
-  - travis_time_finish && travis_fold end 'make.install.gettext'
+      cd - &&
+      travis_time_finish &&
+      travis_fold end 'configure.gettext'
+  - >
+      travis_fold start 'make.gettext' &&
+      travis_time_start &&
+      make -C ./gettext-* -j $(getconf _NPROCESSORS_ONLN) CC="ccache $CC" CXX="ccache $CXX" &&
+      travis_time_finish &&
+      travis_fold end 'make.gettext'
+  - >
+      travis_fold start 'make.install.gettext' &&
+      travis_time_start &&
+      make -C ./gettext-* install &&
+      travis_time_finish &&
+      travis_fold end 'make.install.gettext'
   - rm -rf "${gettext}/share/doc"
   - >
       cd ./vim-kaoriya/vim &&
@@ -126,8 +138,9 @@ script:
       guilt push --all &&
       cd -
   - make -C ./vim-kaoriya/vim/src autoconf
-  - travis_fold start 'build.vim' && travis_time_start
   - >
+      travis_fold start 'build.vim' &&
+      travis_time_start &&
       export LUA_PREFIX="$(brew --prefix)" &&
       export CFLAGS="-I${gettext}/include" &&
       export LDFLAGS="-L${gettext}/lib" &&
@@ -135,8 +148,9 @@ script:
       eval "./configure --prefix=${prefix} ${configurations}" &&
       make -j $(getconf _NPROCESSORS_ONLN) DATADIR=${datadir} &&
       make install &&
-      cd -
-  - travis_time_finish && travis_fold end 'build.vim'
+      cd - &&
+      travis_time_finish &&
+      travis_fold end 'build.vim'
   - gsed -i.bak -r -e "s|\<root\>|$(whoami)|g" ./vim-kaoriya/build/freebsd/Makefile
   - make -C ./vim-kaoriya/build/freebsd VIM_DIR="${prefix}/share/vim" kaoriya-install
   - >
