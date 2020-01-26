@@ -1,7 +1,6 @@
 os: osx
 
-# NOTE: minimal is alias of shell
-language: shell
+language: c
 
 compiler: clang
 
@@ -10,46 +9,79 @@ git:
 
 jobs:
   include:
-    - osx_image: xcode8
-    - osx_image: xcode9.2
-    - osx_image: xcode10.1
     - osx_image: xcode11.3
-
-addons:
-  homebrew:
-    packages:
-      - autoconf
-      # for gettext build
-      - ccache
-      - coreutils
-      - gnu-sed
-      - lua@5.1
-      - luajit
-      - python@2
-      - python@3
-    update: true
+      addons:
+        homebrew: &modern_macos_homebrew
+          packages:
+            - autoconf
+            # for gettext build
+            - ccache
+            - coreutils
+            - gnu-sed
+            - lua@5.1
+            - luajit
+            - python@2
+            - python@3
+          update: true
+    - osx_image: xcode10.1
+      addons:
+        homebrew: *modern_macos_homebrew
+    - osx_image: xcode9.2
+      addons:
+        homebrew: &legacy_macos_homebrew
+          packages:
+            - lua@5.1
+            - luajit
+            - python@2
+            - python@3
+          update: true
+      before_install: &legacy_macos_before_install
+        - curl -fsSLO https://raw.githubusercontent.com/GiovanniBussi/macports-ci/master/macports-ci
+        - source ./macports-ci install
+        - source macports-ci ccache
+        - yes | sudo port install -N autoconf
+        # for gettext build
+        - yes | sudo port install -N ccache
+        - yes | sudo port install -N coreutils
+        - yes | sudo port install -N git
+        - yes | sudo port install -N gsed
+        - source macports-ci ccache --save
+    - osx_image: xcode8
+      addons:
+        homebrew: *legacy_macos_homebrew
+      before_install: *legacy_macos_before_install
 
 cache:
   directories:
     - $HOME/.ccache
+    - $HOME/.macports-ci-ccache
     - $HOME/Library/Caches/Homebrew
+    - /opt/local/var/macports/build/.ccache/
 
 env:
   global:
     - datadir=/use/local/share
-    - gettext=${prefix}/share/gettext
     - prefix=/var/tmp/vim
+    - gettext=${prefix}/share/gettext
     - version=$(sw_vers -productVersion)
-    - CC=clang
-    - CXX=clang++
-    - PATH=${gettext}/bin:/usr/local/opt/ccache/libexec:${PATH}
+    - PATH=${gettext}/bin:/usr/local/opt/ccache/libexec:/opt/local/bin:/opt/local/sbin:${PATH}
 
 before_script:
-  - export -f travis_nanoseconds
+  - export -f travis_cmd
   - export -f travis_fold
-  - export -f travis_time_start
+  - export -f travis_nanoseconds
   - export -f travis_time_finish
-  - sw_vers
+  - export -f travis_time_start
+  - >
+    travis_fold_cmd() {
+      local name
+      name="$1"
+      shift
+      travis_fold start "$name"
+      travis_cmd "$*" --echo --timing
+      travis_fold end "$name"
+    }
+  - export -f travis_fold_cmd
   - export options=()
   - options+=(--enable-fail-if-missing)
   - options+=(--disable-smack)
@@ -72,6 +104,8 @@ before_script:
   - options+=(--without-x)
   - options+=(--with-tlib=ncurses)
   - export configurations=${options[*]}
+  - sw_vers
+  - ccache -s
 
 script:
   - >
@@ -87,17 +121,11 @@ script:
   - gsed -i.bak -r -e 's|\<readlink\>|greadlink|g' ./guilt/guilt
   - make -C ./guilt PREFIX=/usr/local install
   - curl -fsSLO https://ftp.gnu.org/pub/gnu/gettext/gettext-0.20.1.tar.xz
-  - >
-      travis_fold start 'tar.gettext' &&
-      travis_time_start &&
-      tar fvx ./gettext-*.tar.xz &&
-      travis_time_finish &&
-      travis_fold end 'tar.gettext'
+  - travis_fold_cmd tar.gettext tar fvx ./gettext-*.tar.xz
   - rm ./gettext-*.tar.xz
   - >
-      travis_fold start 'configure.gettext' &&
-      travis_time_start &&
-      cd ./gettext-* &&
+      travis_fold_cmd configure.gettext
+      cd ./gettext-* '&&'
       ./configure
       --prefix=${gettext}
       --disable-silent-rules
@@ -108,22 +136,14 @@ script:
       --without-emacs
       --without-git
       --without-bzip2
-      --without-xz &&
-      cd - &&
-      travis_time_finish &&
-      travis_fold end 'configure.gettext'
+      --without-xz '&&'
+      cd -
   - >
-      travis_fold start 'make.gettext' &&
-      travis_time_start &&
-      make -C ./gettext-* -j $(getconf _NPROCESSORS_ONLN) CC="ccache $CC" CXX="ccache $CXX" &&
-      travis_time_finish &&
-      travis_fold end 'make.gettext'
+      travis_fold_cmd make.gettext
+      make -C ./gettext-* -j $(getconf _NPROCESSORS_ONLN) CC=\"ccache $CC\"
   - >
-      travis_fold start 'make.install.gettext' &&
-      travis_time_start &&
-      make -C ./gettext-* install &&
-      travis_time_finish &&
-      travis_fold end 'make.install.gettext'
+      travis_fold_cmd make.install.gettext
+      make -C ./gettext-* install
   - rm -rf "${gettext}/share/doc"
   - >
       cd ./vim-kaoriya/vim &&
@@ -141,18 +161,14 @@ script:
       cd -
   - make -C ./vim-kaoriya/vim/src autoconf
   - >
-      travis_fold start 'build.vim' &&
-      travis_time_start &&
       export LUA_PREFIX="$(brew --prefix)" &&
       export CFLAGS="-I${gettext}/include" &&
       export LDFLAGS="-L${gettext}/lib" &&
       cd ./vim-kaoriya/vim &&
-      eval "./configure --prefix=${prefix} ${configurations}" &&
-      make -j $(getconf _NPROCESSORS_ONLN) DATADIR=${datadir} &&
-      make install &&
-      cd - &&
-      travis_time_finish &&
-      travis_fold end 'build.vim'
+      travis_fold_cmd configure.vim eval "./configure --prefix=${prefix} ${configurations}" &&
+      travis_fold_cmd make.vim make -j $(getconf _NPROCESSORS_ONLN) DATADIR=${datadir} &&
+      travis_fold_cmd make.install.vim make install &&
+      cd -
   - gsed -i.bak -r -e "s|\<root\>|$(whoami)|g" ./vim-kaoriya/build/freebsd/Makefile
   - make -C ./vim-kaoriya/build/freebsd VIM_DIR="${prefix}/share/vim" kaoriya-install
   - >
@@ -188,7 +204,7 @@ before_deploy:
   - tar cfJ "vim-macos-${version}.tar.xz" ./vim-macos
   - zip -qr "vim-macos-${version}.zip" ./vim-macos
   - >-
-    sha256sum
+    shasum --algorithm 256
     "vim-macos-${version}.tar.gz"
     "vim-macos-${version}.tar.xz"
     "vim-macos-${version}.zip"
