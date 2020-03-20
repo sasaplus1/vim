@@ -1,0 +1,21 @@
+name: publish
+
+on:
+  push:
+    branches:
+      - master
+
+jobs:
+  publish:
+    name: publish
+    runs-on: ubuntu-latest
+    env:
+      DOCKER_BUILDKIT: 1
+    steps:
+      - uses: actions/checkout@v2
+      - run: docker login -u sasaplus1 -p "${{ secrets.GITHUB_TOKEN }}" docker.pkg.github.com
+      - run: docker-compose build
+      - run: docker tag sasaplus1/vim:alpine docker.pkg.github.com/${{ github.repository }}/vim:alpine
+      - run: docker tag sasaplus1/vim:ubuntu docker.pkg.github.com/${{ github.repository }}/vim:ubuntu
+      - run: docker push docker.pkg.github.com/${{ github.repository }}/vim:alpine
+      - run: docker push docker.pkg.github.com/${{ github.repository }}/vim:ubuntu
