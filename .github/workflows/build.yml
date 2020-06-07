@@ -101,7 +101,7 @@ jobs:
           git clone --depth 1 https://github.com/koron/vim-kaoriya.git
       - run: >
           cd vim-kaoriya &&
-          git submodule update --init -- ./patches ./vim
+          git submodule update --depth 1 --init --recommend-shallow --recursive -- ./patches ./vim
       - run: gsed -i.bak -r -e 's|\<readlink\>|greadlink|g' ./guilt/guilt
       - run: make -C ./guilt PREFIX=/usr/local install
       - run: curl -fsSLO https://ftp.gnu.org/pub/gnu/gettext/gettext-0.20.1.tar.xz
