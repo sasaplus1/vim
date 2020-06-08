@@ -21,8 +21,8 @@ jobs:
       - run: docker cp $(docker ps -q):/tmp/vim.tar.gz .
       - run: docker-compose down
       - run: tar fxz vim.tar.gz
-      - run: vim/bin/pvim --version
       - run: ldd vim/bin/vim
+      - run: vim/bin/pvim --version
       - run: mv vim vim-linux
       - run: tar cfz vim-linux.tar.gz ./vim-linux
       - run: tar cfJ vim-linux.tar.xz ./vim-linux
@@ -162,9 +162,9 @@ jobs:
           "$(otool -L ${prefix}/bin/vim | awk '/libintl/ { print $1 }')"
           '@executable_path/../share/gettext/lib/libintl.dylib'
           "${prefix}/bin/vim"
+      - run: otool -L "${prefix}/bin/vim"
       - run: >
           "${prefix}/bin/pvim" --version
-      - run: otool -L "${prefix}/bin/vim"
       - run: mv "${prefix}" ./$(basename "${prefix}")-macos
       - run: tar cfz "vim-macos-${version}.tar.gz" ./vim-macos
       - run: tar cfJ "vim-macos-${version}.tar.xz" ./vim-macos
