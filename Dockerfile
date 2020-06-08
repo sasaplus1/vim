@@ -19,7 +19,7 @@ RUN git clone --depth 1 https://github.com/koron/guilt.git && \
   git clone --depth 1 https://github.com/koron/vim-kaoriya.git
 
 RUN cd ./vim-kaoriya && \
-  git submodule update --init -- ./patches ./vim
+  git submodule update --depth 1 --init --recommend-shallow --recursive -- ./patches ./vim
 
 RUN cd ./guilt && \
   make PREFIX=/opt/guilt install

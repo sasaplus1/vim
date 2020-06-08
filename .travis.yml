@@ -69,7 +69,7 @@ script:
       git clone --depth 1 https://github.com/koron/vim-kaoriya.git
   - >
       cd vim-kaoriya &&
-      git submodule update --init -- ./patches ./vim &&
+      git submodule update --depth 1 --init --recommend-shallow --recursive -- ./patches ./vim &&
       cd -
   - gsed -i.bak -r -e 's|\<readlink\>|greadlink|g' ./guilt/guilt
   - make -C ./guilt PREFIX=/usr/local install
