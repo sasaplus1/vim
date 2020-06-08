@@ -14,8 +14,6 @@ jobs:
       DEBIAN_FRONTEND: noninteractive
     steps:
       - uses: actions/checkout@v2
-        with:
-          fetch-depth: 1
       - run: docker-compose build ubuntu
       - run: docker-compose run --detach --rm ubuntu tail -f /dev/null
       - run: docker cp $(docker ps -q):/tmp/vim.tar.gz .
@@ -75,8 +73,6 @@ jobs:
       prefix: /var/tmp/vim
     steps:
       - uses: actions/checkout@v2
-        with:
-          fetch-depth: 1
       - run: brew update
       - run: >
           brew install

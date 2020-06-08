@@ -17,8 +17,6 @@ jobs:
           - ubuntu
     steps:
       - uses: actions/checkout@v2
-        with:
-          fetch-depth: 1
       - run: >
           docker-compose run
           --rm ${{ matrix.distribution }}
@@ -30,6 +28,4 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v2
-        with:
-          fetch-depth: 1
       - run: make lint
