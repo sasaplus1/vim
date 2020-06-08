@@ -8,6 +8,8 @@ ARG configurations
 ARG datadir=/usr/local/share
 ARG prefix=/opt/vim
 
+ENV DEBIAN_FRONTEND noninteractive
+
 RUN eval "${setup}"
 
 WORKDIR /root
