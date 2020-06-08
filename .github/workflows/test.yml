@@ -9,6 +9,7 @@ jobs:
     name: build Docker image
     env:
       COMPOSE_DOCKER_CLI_BUILD: 1
+      DOCKER_BUILDKIT: 1
     runs-on: ubuntu-latest
     strategy:
       matrix:

@@ -11,6 +11,8 @@ jobs:
     name: build Vim for Linux
     runs-on: ubuntu-latest
     env:
+      COMPOSE_DOCKER_CLI_BUILD: 1
+      DOCKER_BUILDKIT: 1
       DEBIAN_FRONTEND: noninteractive
     steps:
       - uses: actions/checkout@v2
