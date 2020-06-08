@@ -15,7 +15,7 @@ jobs:
     steps:
       - uses: actions/checkout@v2
       - run: sudo apt update --yes
-      - run: sudo apt install --yes libncurses
+      - run: sudo apt install --yes libncurses-dev
       - run: docker-compose build ubuntu
       - run: docker-compose run --detach --rm ubuntu tail -f /dev/null
       - run: docker cp $(docker ps -q):/tmp/vim.tar.gz .
