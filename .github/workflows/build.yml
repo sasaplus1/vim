@@ -10,6 +10,8 @@ jobs:
   linux:
     name: build Vim for Linux
     runs-on: ubuntu-latest
+    env:
+      DEBIAN_FRONTEND: noninteractive
     steps:
       - uses: actions/checkout@v2
         with:
